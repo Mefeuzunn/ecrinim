@@ -706,6 +706,39 @@ class UniverseApp {
 
     // Sekmeler arası parmakla sola/sağa kaydırma (Swipe Gestures)
     this.setupSwipeTabs(tabButtons, activateTab);
+
+    // Sekmeler çubuğunu fare ile tutup sürükleyerek kaydırma (Drag to Scroll)
+    this.setupTabsDragScroll();
+  }
+
+  // 🖱️ Sekme Çubuğunu Mouse / Touch ile Tutup Kaydırma
+  setupTabsDragScroll() {
+    const nav = document.getElementById('portal-nav-tabs');
+    if (!nav) return;
+
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    nav.addEventListener('mousedown', (e) => {
+      isDown = true;
+      nav.classList.add('grabbing');
+      startX = e.pageX - nav.offsetLeft;
+      scrollLeft = nav.scrollLeft;
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDown = false;
+      nav.classList.remove('grabbing');
+    });
+
+    nav.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - nav.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      nav.scrollLeft = scrollLeft - walk;
+    });
   }
 
   // 👆 Parmakla Sola/Sağa Kaydırarak Sekme Değiştirme (Swipe Gestures)

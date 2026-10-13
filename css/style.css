@@ -473,47 +473,95 @@ body.portal-open {
 }
 
 /* ===================================================================
-   SEKME BUTONLARI (NAV TABS)
+   SEKME BUTONLARI (SÜREKLİ KAYAN TEK SATIR ÇUBUK)
    =================================================================== */
+.portal-nav-tabs-wrapper {
+  position: relative;
+  width: 100%;
+  margin: 24px 0 20px;
+}
+
+/* Sol ve sağ kenarlarda zarif kaybolma gölgeleri (Scroll Fade Edges) */
+.portal-nav-tabs-wrapper::before,
+.portal-nav-tabs-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 28px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.portal-nav-tabs-wrapper::before {
+  left: 0;
+  background: linear-gradient(90deg, rgba(14, 7, 24, 0.95) 0%, transparent 100%);
+}
+
+.portal-nav-tabs-wrapper::after {
+  right: 0;
+  background: linear-gradient(-90deg, rgba(14, 7, 24, 0.95) 0%, transparent 100%);
+}
+
 .portal-nav-tabs {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin: 32px 0 24px;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  gap: 10px;
+  padding: 8px 14px;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: grab;
+}
+
+.portal-nav-tabs.grabbing {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.portal-nav-tabs::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
 }
 
 .portal-tab-btn {
-  display: flex;
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 22px;
+  padding: 11px 20px;
   border-radius: 40px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   color: var(--text-muted);
   font-family: var(--font-main);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .portal-tab-btn:hover {
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
-  border-color: rgba(255, 180, 215, 0.3);
+  border-color: rgba(255, 180, 215, 0.35);
 }
 
 .portal-tab-btn.active {
-  background: linear-gradient(135deg, rgba(255, 153, 187, 0.25), rgba(192, 132, 252, 0.25));
+  background: linear-gradient(135deg, rgba(255, 153, 187, 0.28), rgba(192, 132, 252, 0.28));
   border-color: var(--color-primary);
   color: #fff;
-  box-shadow: 0 0 25px rgba(255, 153, 187, 0.3);
+  box-shadow: 0 0 25px rgba(255, 153, 187, 0.35);
 }
 
 .tab-icon {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
 }
 
 /* ===================================================================
@@ -1555,35 +1603,36 @@ body.portal-open {
   }
 
   /* 📑 YATAY KAYAN SEKME ÇUBUĞU (STICKY HORIZONTAL TABS) */
-  .portal-nav-tabs {
+  .portal-nav-tabs-wrapper {
     position: sticky;
-    top: -1px;
+    top: 0;
     z-index: 105;
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-    scrollbar-width: none;
-    gap: 8px;
-    margin: 16px -16px 18px;
-    padding: 10px 16px;
-    background: rgba(14, 7, 24, 0.94);
+    margin: 14px -16px 18px;
+    width: calc(100% + 32px);
+    background: rgba(14, 7, 24, 0.96);
     backdrop-filter: blur(25px);
     -webkit-backdrop-filter: blur(25px);
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 2px 0;
   }
 
-  .portal-nav-tabs::-webkit-scrollbar {
-    display: none;
+  .portal-nav-tabs-wrapper::before,
+  .portal-nav-tabs-wrapper::after {
+    width: 20px;
+  }
+
+  .portal-nav-tabs {
+    padding: 8px 16px;
+    gap: 8px;
+    margin: 0;
+    border: none;
+    background: transparent;
   }
 
   .portal-tab-btn {
-    flex-shrink: 0;
-    white-space: nowrap;
-    padding: 9px 16px;
-    font-size: 0.86rem;
+    padding: 8px 15px;
+    font-size: 0.84rem;
     border-radius: 26px;
     gap: 6px;
   }
