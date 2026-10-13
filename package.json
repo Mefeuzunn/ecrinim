@@ -1,0 +1,18 @@
+{
+  "name": "ecrinim",
+  "version": "1.0.0",
+  "description": "Ecrin'e Özel 3D Kozmik Galaksi ve Aşk Portalı",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "galaxy",
+    "threejs",
+    "love",
+    "romantic"
+  ],
+  "author": "Efe",
+  "license": "MIT"
+}

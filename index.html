@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ecrin'in Galaksisi ✨ Sonsuz Evrenimiz</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
+
+  <!-- Google Fonts: Modern & Romantik Tipografi -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Dancing+Script:wght@600;700&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Three.js (3D WebGL Galaksi Motoru) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  
+  <!-- Canvas Confetti (Kozmik Kutlama Parçacıkları) -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <!-- Özel Stiller -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- 3D Galaksi Canvas Alanı -->
+  <div id="galaxy-canvas-container"></div>
+
+  <!-- Üst Gezinme & Müzik Barı -->
+  <header class="cosmic-header">
+    <div class="brand-badge">
+      <span class="sparkle-icon">✦</span>
+      <span class="brand-title"><span class="partner-name">Ecrin</span>'in Evreni</span>
+    </div>
+
+    <div class="header-controls">
+      <!-- Müzik Çalar Butonu -->
+      <button id="music-toggle-btn" class="cosmic-btn glass-btn" title="Müziği Başlat / Durdur">
+        <div class="music-visualizer" id="music-visualizer">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <span class="music-label" id="music-status-text">Müziği Başlat</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Galaksi Açılış Yönergesi & İpucu -->
+  <div class="galaxy-instructions" id="galaxy-instructions">
+    <div class="hint-pill">
+      <span class="pulse-dot"></span>
+      <span id="galaxy-hint">Galaksiyi keşfetmek için sürükle, parlayan yıldıza tıklayarak bizim dünyamıza gir ✨</span>
+    </div>
+  </div>
+
+  <!-- 3D Galaksideki Özel Yıldızın Üzerinde Gezen İnteraktif Etiket -->
+  <div id="special-star-label" class="star-3d-tag">
+    <div class="tag-pulse-ring"></div>
+    <div class="tag-content">
+      <div class="tag-sparkle">💖</div>
+      <div class="tag-info">
+        <h4 id="star-name-display">Ecrin'in Yıldızı</h4>
+        <span class="tag-sub">Tıkla ve Dünyamızı Keşfet ✨</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- BİZİM EVRENİMİZ (PORTAL / MODAL ARAYÜZÜ)       -->
+  <!-- ============================================== -->
+  <div id="portal-overlay" class="portal-overlay">
+    <div class="portal-glass-container">
+      
+      <!-- Kapat ve Galaksiye Dön Butonu -->
+      <button id="close-portal-btn" class="close-portal-btn" title="Galaksiye Geri Dön">
+        <span>✕</span> Galaksiye Dön
+      </button>
+
+      <!-- Portalı Açan Başlık ve Canlı Sayaç -->
+      <div class="portal-hero">
+        <div class="star-badge-glow">
+          <span class="badge-icon">⭐</span>
+          <span class="badge-text">Resmi Galaktik Tescilli Yıldız</span>
+        </div>
+
+        <h1 class="portal-main-title">
+          <span class="partner-name">Ecrin</span> & <span class="your-name">Efe</span>
+        </h1>
+        <p class="portal-quote" id="star-quote-display">
+          "Karanlık bir evrende, kalbimi aydınlatan en parlak yıldız sensin..."
+        </p>
+
+        <!-- Canlı Aşk Sayacı -->
+        <div class="love-counter-box">
+          <div class="counter-header">
+            <span class="heart-pulse">❤️</span>
+            <span>Seninle Başlayan Sonsuzluk</span>
+          </div>
+          <div class="counter-grid">
+            <div class="counter-unit">
+              <span class="counter-val" id="counter-days">0</span>
+              <span class="counter-lbl">Gün</span>
+            </div>
+            <div class="counter-sep">:</div>
+            <div class="counter-unit">
+              <span class="counter-val" id="counter-hours">00</span>
+              <span class="counter-lbl">Saat</span>
+            </div>
+            <div class="counter-sep">:</div>
+            <div class="counter-unit">
+              <span class="counter-val" id="counter-mins">00</span>
+              <span class="counter-lbl">Dakika</span>
+            </div>
+            <div class="counter-sep">:</div>
+            <div class="counter-unit">
+              <span class="counter-val" id="counter-secs">00</span>
+              <span class="counter-lbl">Saniye</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sayfa Sekmeleri (Tabs) -->
+      <nav class="portal-nav-tabs">
+        <button class="portal-tab-btn active" data-tab="certificate">
+          <span class="tab-icon">📜</span> Yıldız Sertifikası
+        </button>
+        <button class="portal-tab-btn" data-tab="timeline">
+          <span class="tab-icon">⏳</span> Anılarımız
+        </button>
+        <button class="portal-tab-btn" data-tab="letter">
+          <span class="tab-icon">💌</span> Aşk Mektubu
+        </button>
+        <button class="portal-tab-btn" data-tab="reasons">
+          <span class="tab-icon">💖</span> Seni Sevme Sebeplerim
+        </button>
+        <button class="portal-tab-btn" data-tab="gallery">
+          <span class="tab-icon">📸</span> Galeri
+        </button>
+        <button class="portal-tab-btn" data-tab="dreams">
+          <span class="tab-icon">🌠</span> Gelecek Hayallerimiz
+        </button>
+      </nav>
+
+      <!-- ================= SEKME İÇERİKLERİ ================= -->
+      <div class="portal-content-body">
+
+        <!-- 1. SEKME: YILDIZ SERTİFİKASI -->
+        <div class="portal-tab-panel active" id="tab-certificate">
+          <div class="certificate-wrapper">
+            <div class="certificate-frame">
+              <div class="cert-gold-border">
+                <div class="cert-header">
+                  <div class="cert-crest">✦ 🪐 ✦</div>
+                  <h2>EVRENSEL YILDIZ TESCİL SERTİFİKASI</h2>
+                  <p class="cert-sub">Bu belge ile gökyüzündeki aşağıdaki koordinatlara sahip gök cisminin sonsuza dek tescil edildiği onaylanır.</p>
+                </div>
+
+                <div class="cert-star-highlight">
+                  <span class="cert-star-glow">✨</span>
+                  <h3 class="partner-name">Ecrin</h3>
+                  <span class="cert-star-glow">✨</span>
+                </div>
+
+                <div class="cert-meta-grid">
+                  <div class="cert-meta-item">
+                    <span class="meta-label">Takımyıldızı</span>
+                    <span class="meta-val" id="star-constellation-display">Sonsuz Kalp Takımyıldızı</span>
+                  </div>
+                  <div class="cert-meta-item">
+                    <span class="meta-label">Galaktik Koordinatlar</span>
+                    <span class="meta-val" id="star-coords-display">RA 18h 36m 56s | Dec +38° 47′ 01″</span>
+                  </div>
+                  <div class="cert-meta-item">
+                    <span class="meta-label">Uzaklık</span>
+                    <span class="meta-val" id="star-dist-display">0 Işık Yılı (Kalbimin İçi)</span>
+                  </div>
+                  <div class="cert-meta-item">
+                    <span class="meta-label">Parlaklık (Magnitude)</span>
+                    <span class="meta-val" id="star-mag-display">Gözlerinin Işıltısı Kadar Sonsuz</span>
+                  </div>
+                </div>
+
+                <div class="cert-footer">
+                  <div class="cert-sign">
+                    <span class="sign-line"></span>
+                    <span class="sign-name"><span class="your-name">Efe</span></span>
+                    <span class="sign-title">Gökbilimci & Sevgilin</span>
+                  </div>
+                  <div class="cert-seal">
+                    <div class="gold-wax-seal">
+                      <span>DAİMA<br>AŞKLA</span>
+                    </div>
+                  </div>
+                  <div class="cert-sign">
+                    <span class="sign-line"></span>
+                    <span class="sign-name">Sonsuzluk</span>
+                    <span class="sign-title">Geçerlilik Süresi</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. SEKME: ZAMAN TÜNELİ & ANILARIMIZ -->
+        <div class="portal-tab-panel" id="tab-timeline">
+          <div class="timeline-intro">
+            <h2>Bizim Hikayemiz ✨</h2>
+            <p>Zamanın akıp gittiği bu evrende, seninle geçirdiğim her bir an sonsuz bir hazine...</p>
+          </div>
+          <div class="timeline-vertical" id="timeline-container">
+            <!-- JS ile doldurulacak -->
+          </div>
+        </div>
+
+        <!-- 3. SEKME: KALBİMDEN GELEN MEKTUP -->
+        <div class="portal-tab-panel" id="tab-letter">
+          <div class="letter-section-container">
+            <div class="envelope-outer" id="love-envelope">
+              <div class="envelope-flap"></div>
+              
+              <div class="wax-seal" id="envelope-wax-seal" title="Mührü Açmak İçin Dokun">
+                <div class="wax-seal-inner">
+                  <span>💌</span>
+                  <small>Mührü Aç</small>
+                </div>
+              </div>
+
+              <div class="letter-paper" id="letter-paper">
+                <div class="letter-paper-inner">
+                  <div class="letter-header-icon">❦</div>
+                  <h3 id="letter-salutation">Canım Ecrinim,</h3>
+                  <div class="letter-paragraphs" id="letter-paragraphs">
+                    <!-- JS ile doldurulacak -->
+                  </div>
+                  <div class="letter-signature-box">
+                    <p id="letter-signature">Seni sonsuza dek sevecek olan,</p>
+                    <h4 id="letter-author">Efe ❤️</h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="envelope-hint">✨ Zarfın ortasındaki kırmızı balmumu mührüne dokunarak mektubumu oku.</p>
+          </div>
+        </div>
+
+        <!-- 4. SEKME: SENİ SEVME SEBEPLERİM -->
+        <div class="portal-tab-panel" id="tab-reasons">
+          <div class="reasons-wrapper">
+            <div class="reasons-header">
+              <h2>Seni Neden Bu Kadar Çok Seviyorum? 💖</h2>
+              <p>Milyonlarca sebepten sadece birkaçı...</p>
+            </div>
+
+            <div class="reason-cosmic-card">
+              <div class="card-sparkles">✨</div>
+              <div class="reason-badge" id="reason-counter">Sebep #1 / 20</div>
+              <p class="reason-quote" id="reason-text">"Gülümseyince gözlerinin etrafında beliren o tatlı çizgiler."</p>
+              
+              <button id="next-reason-btn" class="next-reason-btn">
+                <span>Yeni Bir Neden Keşfet</span> ✨
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. SEKME: FOTOĞRAF GALERİSİ -->
+        <div class="portal-tab-panel" id="tab-gallery">
+          <div class="gallery-intro">
+            <h2>Kozmik Hatıralarımız 📸</h2>
+            <p>Büyütmek istediğin fotoğrafın üzerine tıklayabilirsin.</p>
+          </div>
+          <div class="gallery-grid" id="gallery-grid">
+            <!-- JS ile doldurulacak -->
+          </div>
+        </div>
+
+        <!-- 6. SEKME: GELECEK HAYALLERİMİZ (DİLEK YILDIZI) -->
+        <div class="portal-tab-panel" id="tab-dreams">
+          <div class="dreams-wrapper">
+            <div class="dreams-header">
+              <h2>Gelecek Hayallerimiz & Dilek Yıldızı 🌠</h2>
+              <p>Seninle bu hayatta gerçekleştirmek istediğimiz her şeyi buraya yazıyoruz.</p>
+            </div>
+
+            <ul class="dreams-list" id="dreams-list">
+              <!-- JS ile doldurulacak -->
+            </ul>
+
+            <form class="add-dream-form" id="add-dream-form">
+              <input type="text" id="new-dream-input" placeholder="Yeni bir ortak hayalimiz ekle..." required autocomplete="off">
+              <button type="submit" class="add-dream-btn">
+                <span>Yıldızlara Ekle</span> ✨
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Fotoğraf Büyüteci (Lightbox Modal) -->
+  <div id="lightbox-modal" class="lightbox-modal">
+    <button class="lightbox-close" id="lightbox-close">✕</button>
+    <div class="lightbox-content">
+      <img id="lightbox-img" src="" alt="Büyütülmüş Anı">
+      <p id="lightbox-caption" class="lightbox-caption"></p>
+    </div>
+  </div>
+
+  <!-- Ana Uygulama Modülü -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
