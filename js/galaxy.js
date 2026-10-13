@@ -32,9 +32,9 @@ export class GalaxyEngine {
     this.secretStarMesh = null;
     this.secretStarPos = new THREE.Vector3(-22, 6, -14);
 
-    // Takımyıldızı Grubu (Kozmik Kalp)
+    // Takımyıldızı Grubu (Kozmik Kalp - Her Zaman Aktif)
     this.constellationGroup = null;
-    this.isConstellationVisible = false;
+    this.isConstellationVisible = true;
 
     this.shootingStars = [];
     this.raycaster = new THREE.Raycaster();
@@ -302,28 +302,28 @@ export class GalaxyEngine {
     this.scene.add(this.secretStarGroup);
   }
 
-  // ✨ KOZMİK KALP TAKIMYILDIZI (CONSTELLATION)
+  // ✨ KOZMİK KALP TAKIMYILDIZI (CONSTELLATION - DAİMA AKTİF)
   buildConstellation() {
     this.constellationGroup = new THREE.Group();
-    this.constellationGroup.visible = false;
+    this.constellationGroup.visible = true;
 
     // Kalp noktaları (Parametrik eğri)
     const heartPoints = [];
-    const count = 32;
+    const count = 36;
     for (let i = 0; i <= count; i++) {
       const t = (i / count) * Math.PI * 2;
-      const x = 16 * Math.pow(Math.sin(t), 3) * 0.42;
-      const y = (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * 0.42 + 4;
+      const x = 16 * Math.pow(Math.sin(t), 3) * 0.44;
+      const y = (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * 0.44 + 4;
       const z = Math.sin(t) * 2;
       heartPoints.push(new THREE.Vector3(x, y, z));
     }
 
-    // 1. Çizgi Geometrisi
+    // 1. Çizgi Geometrisi (Parlayan Neon Pembe)
     const lineGeo = new THREE.BufferGeometry().setFromPoints(heartPoints);
     const lineMat = new THREE.LineBasicMaterial({
-      color: 0xff85b3,
+      color: 0xff66b2,
       transparent: true,
-      opacity: 0.85,
+      opacity: 0.95,
       blending: THREE.AdditiveBlending
     });
     const heartLine = new THREE.Line(lineGeo, lineMat);

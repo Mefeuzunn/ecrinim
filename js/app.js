@@ -52,7 +52,6 @@ class UniverseApp {
     this.setupLetterEnvelope();
     this.setupTimeCapsule();
     this.setupSpotify();
-    this.setupConstellationButton();
     this.setupWishSystem();
     this.setupSecretStarModal();
     this.setupTabs();
