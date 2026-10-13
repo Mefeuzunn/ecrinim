@@ -55,6 +55,7 @@ export class GalaxyEngine {
 
     // 3D Etiket elementi
     this.starLabelEl = document.getElementById('special-star-label');
+    this.gyroOffset = { x: 0, y: 0 };
 
     this.init();
   }
@@ -502,6 +503,17 @@ export class GalaxyEngine {
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(w, h);
     });
+
+    // Mobil Jiroskop (Gyroscope Parallax) Desteği
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener('deviceorientation', (e) => {
+        if (e.beta === null || e.gamma === null) return;
+        const tiltX = (e.beta - 45) * 0.005;
+        const tiltY = e.gamma * 0.005;
+        this.gyroOffset.x = Math.max(-0.25, Math.min(0.25, tiltX));
+        this.gyroOffset.y = Math.max(-0.25, Math.min(0.25, tiltY));
+      }, { passive: true });
+    }
   }
 
   checkHover() {
@@ -612,9 +624,12 @@ export class GalaxyEngine {
     this.cameraPhi += (this.targetPhi - this.cameraPhi) * 0.06;
     this.cameraDistance += (this.targetDistance - this.cameraDistance) * 0.06;
 
-    const x = this.cameraDistance * Math.sin(this.cameraPhi) * Math.sin(this.cameraTheta);
-    const y = this.cameraDistance * Math.cos(this.cameraPhi);
-    const z = this.cameraDistance * Math.sin(this.cameraPhi) * Math.cos(this.cameraTheta);
+    const phi = this.cameraPhi + this.gyroOffset.x;
+    const theta = this.cameraTheta + this.gyroOffset.y;
+
+    const x = this.cameraDistance * Math.sin(phi) * Math.sin(theta);
+    const y = this.cameraDistance * Math.cos(phi);
+    const z = this.cameraDistance * Math.sin(phi) * Math.cos(theta);
 
     this.camera.position.set(
       this.cameraTarget.x + x,

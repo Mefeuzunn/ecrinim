@@ -194,6 +194,14 @@ export const CONFIG = {
     // Spotify Şarkı / Çalma Listesi Embed Kodu (Örn: track veya playlist ID)
     // Varsayılan olarak romantik bir parça ekli, istenirse kolayca değiştirilebilir:
     spotifyTrackUrl: "https://open.spotify.com/embed/track/1BxfuPKGuaTgP7aM0Xbd3L?utm_source=generator&theme=0"
+  },
+
+  // Sesli Aşk Notu Ayarları (Kendi ses kaydını assets/music/ klasörüne atabilirsin)
+  voiceNote: {
+    title: "Kalbimden Gelen Sesli Mesaj 🎙️",
+    subtitle: "Sadece senin için fısıldandı...",
+    customAudioPath: "", // Örn: "assets/music/sesli_not.mp3"
+    transcript: "Bu evrendeki her şey, yıldızlar ve galaksiler bile bir gün değişebilir; ama sana olan sevgim ve hissettiklerim daima ilk günkü gibi sonsuz kalacak birtanem..."
   }
 };
 

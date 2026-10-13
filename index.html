@@ -19,6 +19,13 @@
   <!-- Canvas Confetti (Kozmik Kutlama Parçacıkları) -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
+  <!-- PWA & Mobile Web App Desteği -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#180a24">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ecrinim">
+
   <!-- Özel Stiller -->
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -259,6 +266,12 @@
                 </div>
               </div>
             </div>
+            
+            <div class="cert-download-bar">
+              <button id="download-cert-btn" class="download-cert-btn">
+                <span>📜 Resmi Yıldız Sertifikasını İndir (PNG)</span> ✨
+              </button>
+            </div>
           </div>
         </div>
 
@@ -301,6 +314,26 @@
               </div>
             </div>
             <p class="envelope-hint">✨ Zarfın ortasındaki kırmızı balmumu mührüne dokunarak mektubumu oku.</p>
+
+            <!-- Sesli Aşk Notu Oynatıcısı -->
+            <div class="voice-note-card">
+              <div class="voice-note-header">
+                <div class="voice-mic-icon">🎙️</div>
+                <div class="voice-info">
+                  <h4 id="voice-title">Kalbimden Gelen Sesli Mesaj</h4>
+                  <span id="voice-sub">Sadece senin için fısıldandı...</span>
+                </div>
+                <button id="play-voice-btn" class="play-voice-btn" title="Sesli Notu Dinle / Durdur">
+                  <span id="voice-btn-icon">▶</span>
+                </button>
+              </div>
+              <div class="voice-wave-container" id="voice-wave-container">
+                <span class="vbar"></span><span class="vbar"></span><span class="vbar"></span><span class="vbar"></span>
+                <span class="vbar"></span><span class="vbar"></span><span class="vbar"></span><span class="vbar"></span>
+                <span class="vbar"></span><span class="vbar"></span><span class="vbar"></span><span class="vbar"></span>
+              </div>
+              <p class="voice-transcript" id="voice-transcript"></p>
+            </div>
           </div>
         </div>
 

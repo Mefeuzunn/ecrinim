@@ -56,6 +56,9 @@ class UniverseApp {
     this.setupWishSystem();
     this.setupSecretStarModal();
     this.setupTabs();
+    this.setupVoiceNote();
+    this.setupCertificateDownload();
+    this.registerServiceWorker();
     this.setupMusicControls();
     this.setupLightbox();
     this.setupGeneralEvents();
@@ -599,6 +602,187 @@ class UniverseApp {
         cosmicAudio.playSynthNote(440, 0.8);
       });
     });
+  }
+
+  // 🎙️ SESLİ AŞK NOTU OYNATICISI
+  setupVoiceNote() {
+    const titleEl = document.getElementById('voice-title');
+    const subEl = document.getElementById('voice-sub');
+    const transEl = document.getElementById('voice-transcript');
+    const playBtn = document.getElementById('play-voice-btn');
+    const btnIcon = document.getElementById('voice-btn-icon');
+    const waveBox = document.getElementById('voice-wave-container');
+
+    if (titleEl && CONFIG.voiceNote) titleEl.textContent = CONFIG.voiceNote.title;
+    if (subEl && CONFIG.voiceNote) subEl.textContent = CONFIG.voiceNote.subtitle;
+    if (transEl && CONFIG.voiceNote) transEl.textContent = `"${CONFIG.voiceNote.transcript}"`;
+
+    let isPlayingVoice = false;
+    let voiceAudio = null;
+
+    if (CONFIG.voiceNote && CONFIG.voiceNote.customAudioPath && CONFIG.voiceNote.customAudioPath.trim() !== '') {
+      voiceAudio = new Audio(CONFIG.voiceNote.customAudioPath);
+      voiceAudio.addEventListener('ended', () => {
+        isPlayingVoice = false;
+        if (waveBox) waveBox.classList.remove('playing');
+        if (btnIcon) btnIcon.textContent = '▶';
+      });
+    }
+
+    if (playBtn) {
+      playBtn.addEventListener('click', () => {
+        isPlayingVoice = !isPlayingVoice;
+        if (isPlayingVoice) {
+          if (btnIcon) btnIcon.textContent = '⏸';
+          if (waveBox) waveBox.classList.add('playing');
+          if (voiceAudio) {
+            voiceAudio.play().catch(() => {});
+          } else {
+            // Canlı fısıltı armonisi
+            cosmicAudio.playSynthNote(329.63, 4.0);
+            setTimeout(() => cosmicAudio.playSynthNote(440, 3.5), 400);
+            setTimeout(() => cosmicAudio.playSynthNote(523.25, 3.0), 800);
+            setTimeout(() => {
+              isPlayingVoice = false;
+              if (waveBox) waveBox.classList.remove('playing');
+              if (btnIcon) btnIcon.textContent = '▶';
+            }, 4500);
+          }
+        } else {
+          if (btnIcon) btnIcon.textContent = '▶';
+          if (waveBox) waveBox.classList.remove('playing');
+          if (voiceAudio) voiceAudio.pause();
+        }
+      });
+    }
+  }
+
+  // 📜 RESMİ YILDIZ SERTİFİKASINI YÜKSEK ÇÖZÜNÜRLÜKLÜ PNG OLARAK İNDİRME
+  setupCertificateDownload() {
+    const btn = document.getElementById('download-cert-btn');
+    if (!btn) return;
+
+    btn.addEventListener('click', () => {
+      this.triggerCosmicConfetti();
+      cosmicAudio.playChime();
+
+      const canvas = document.createElement('canvas');
+      canvas.width = 1200;
+      canvas.height = 850;
+      const ctx = canvas.getContext('2d');
+
+      // 1. Gece Mavisi Radyal Arka Plan
+      const bgGrad = ctx.createRadialGradient(600, 425, 60, 600, 425, 750);
+      bgGrad.addColorStop(0, '#1c0f33');
+      bgGrad.addColorStop(1, '#070210');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, 1200, 850);
+
+      // Yıldız tozları
+      for (let i = 0; i < 240; i++) {
+        ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.7 + 0.3})`;
+        ctx.fillRect(Math.random() * 1200, Math.random() * 850, Math.random() * 2 + 1, Math.random() * 2 + 1);
+      }
+
+      // 2. Altın Çerçeveler
+      ctx.strokeStyle = '#d4af37';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(35, 35, 1130, 780);
+
+      ctx.strokeStyle = 'rgba(252, 231, 161, 0.45)';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(46, 46, 1108, 758);
+
+      // 3. Başlık
+      ctx.fillStyle = '#fce7a1';
+      ctx.font = 'bold 36px "Cinzel", Georgia, serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('EVRENSEL YILDIZ TESCİL SERTİFİKASI', 600, 120);
+
+      ctx.fillStyle = '#d8cde6';
+      ctx.font = 'italic 18px "Playfair Display", serif';
+      ctx.fillText('Bu belge ile gökyüzündeki aşağıdaki koordinatlara sahip gök cisminin sonsuza dek tescil edildiği onaylanır.', 600, 165);
+
+      // 4. Yıldız Sahibi: Ecrin
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 56px "Playfair Display", Georgia, serif';
+      ctx.fillText(`✨  ${CONFIG.partnerName}  ✨`, 600, 260);
+
+      // 5. Özellikler Tablosu
+      const specs = [
+        ['Takımyıldızı', CONFIG.star.constellation],
+        ['Galaktik Koordinatlar', CONFIG.star.coordinates],
+        ['Uzaklık Derecesi', CONFIG.star.distance],
+        ['Parlaklık (Magnitude)', CONFIG.star.magnitude]
+      ];
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.fillRect(150, 310, 900, 260);
+      ctx.strokeStyle = 'rgba(252, 231, 161, 0.35)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(150, 310, 900, 260);
+
+      specs.forEach(([label, val], idx) => {
+        const row = Math.floor(idx / 2);
+        const col = idx % 2;
+        const x = col === 0 ? 200 : 670;
+        const y = 370 + row * 110;
+
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#fce7a1';
+        ctx.font = 'bold 15px sans-serif';
+        ctx.fillText(label.toUpperCase(), x, y);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '22px sans-serif';
+        ctx.fillText(val, x, y + 36);
+      });
+
+      // 6. İmzalar ve Mühür
+      ctx.fillStyle = '#fce7a1';
+      ctx.font = 'italic 34px "Dancing Script", cursive, serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(CONFIG.yourName, 320, 715);
+      ctx.fillStyle = '#b3a2c7';
+      ctx.font = '14px sans-serif';
+      ctx.fillText('Gökbilimci & Sevgilin', 320, 745);
+
+      // Altın Mühür
+      ctx.beginPath();
+      ctx.arc(600, 695, 48, 0, Math.PI * 2);
+      ctx.fillStyle = '#d4af37';
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#2b1704';
+      ctx.font = 'bold 13px sans-serif';
+      ctx.fillText('DAİMA', 600, 690);
+      ctx.fillText('AŞKLA', 600, 708);
+
+      ctx.fillStyle = '#fce7a1';
+      ctx.font = 'italic 34px "Dancing Script", cursive, serif';
+      ctx.fillText('Sonsuzluk', 880, 715);
+      ctx.fillStyle = '#b3a2c7';
+      ctx.font = '14px sans-serif';
+      ctx.fillText('Geçerlilik Süresi', 880, 745);
+
+      // İndirme
+      const a = document.createElement('a');
+      a.download = `ecrin-yildiz-sertifikasi.png`;
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    });
+  }
+
+  // 📲 PROGRESSIVE WEB APP (OFFLINE CACHE)
+  registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
   }
 
   // Müzik Çalar Kontrolleri

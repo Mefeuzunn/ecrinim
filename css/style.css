@@ -1942,3 +1942,145 @@ body.portal-open {
   color: var(--text-muted);
   pointer-events: none;
 }
+
+/* ===================================================================
+   SERTİFİKA İNDİRME & SESLİ AŞK NOTU STİLLERİ
+   =================================================================== */
+.cert-download-bar {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.download-cert-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #d4af37 0%, #f39c12 100%);
+  border: 1.5px solid rgba(255, 235, 150, 0.5);
+  color: #2b1704;
+  font-family: var(--font-main);
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.download-cert-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(212, 175, 55, 0.6);
+  background: linear-gradient(135deg, #f1c40f 0%, #e67e22 100%);
+}
+
+/* Sesli Aşk Notu Kartı */
+.voice-note-card {
+  margin-top: 35px;
+  width: 100%;
+  max-width: 680px;
+  background: rgba(30, 14, 50, 0.75);
+  border: 1px solid rgba(255, 180, 220, 0.3);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 24px 28px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.voice-note-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.voice-mic-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 105, 180, 0.15);
+  border: 1px solid rgba(255, 105, 180, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--color-primary);
+}
+
+.voice-info {
+  flex: 1;
+}
+
+.voice-info h4 {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.voice-info span {
+  font-size: 0.82rem;
+  color: var(--color-primary-light);
+}
+
+.play-voice-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+  border: none;
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(255, 117, 140, 0.4);
+  transition: all 0.3s;
+}
+
+.play-voice-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 25px rgba(255, 117, 140, 0.6);
+}
+
+.voice-wave-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  margin: 18px 0 14px;
+  padding: 0 4px;
+}
+
+.vbar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  transition: height 0.2s, background-color 0.2s;
+}
+
+.voice-wave-container.playing .vbar:nth-child(odd) {
+  animation: vWave 0.7s ease-in-out infinite alternate;
+  background: var(--color-primary);
+}
+
+.voice-wave-container.playing .vbar:nth-child(even) {
+  animation: vWave 0.9s ease-in-out infinite 0.2s alternate;
+  background: var(--color-gold);
+}
+
+@keyframes vWave {
+  0% { height: 6px; }
+  100% { height: 26px; }
+}
+
+.voice-transcript {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  border-left: 2px solid var(--color-primary);
+  padding-left: 12px;
+}
