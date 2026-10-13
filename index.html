@@ -90,6 +90,11 @@
   <div id="portal-overlay" class="portal-overlay">
     <div class="portal-glass-container">
       
+      <!-- Mobil Çekme & Kapatma Çubuğu (Pull Down Handle) -->
+      <div class="mobile-pull-handle" id="mobile-pull-handle" title="Kapatmak için aşağı çek">
+        <span class="handle-bar"></span>
+      </div>
+
       <!-- Kapat ve Galaksiye Dön Butonu -->
       <button id="close-portal-btn" class="close-portal-btn" title="Galaksiye Geri Dön">
         <span>✕</span> Galaksiye Dön
@@ -111,8 +116,18 @@
 
         <!-- SAYAÇLAR ALANI: GEÇEN ZAMAN & 1. YIL GERİ SAYIMI -->
         <div class="counters-wrapper">
+          <!-- Mobil Segment Switcher (Kompakt Sayaç Geçişi) -->
+          <div class="counter-toggle-pills" id="counter-toggle-pills">
+            <button class="counter-pill-btn active" data-target="elapsed" type="button">
+              <span class="pill-dot"></span> ❤️ Birlikte Geçen Süre
+            </button>
+            <button class="counter-pill-btn" data-target="anniv" type="button">
+              <span class="pill-dot"></span> 🎂 1. Yıla Kalan
+            </button>
+          </div>
+
           <!-- 1. Canlı Aşk Sayacı (Geçen Zaman) -->
-          <div class="love-counter-box">
+          <div class="love-counter-box mobile-active" id="counter-box-elapsed">
             <div class="counter-header">
               <span class="heart-pulse">❤️</span>
               <span>Seninle Başlayan Sonsuzluk</span>
@@ -141,7 +156,7 @@
           </div>
 
           <!-- 2. 1. Yıl Dönümü Geri Sayımı (20 Ocak 2027) -->
-          <div class="love-counter-box anniversary-box">
+          <div class="love-counter-box anniversary-box" id="counter-box-anniv">
             <div class="counter-header">
               <span>🎂</span>
               <span>1. Yılımıza Kalan Süre</span>

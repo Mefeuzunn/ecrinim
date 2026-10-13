@@ -43,6 +43,7 @@ class UniverseApp {
 
     // 4. Sayaçları Başlat (Geçen Zaman + 1. Yıl Geri Sayımı)
     this.startLoveCounters();
+    this.setupCounterToggle();
 
     // 5. İçerikleri ve Özellikleri Başlat
     this.renderTimeline();
@@ -55,6 +56,7 @@ class UniverseApp {
     this.setupWishSystem();
     this.setupSecretStarModal();
     this.setupTabs();
+    this.setupMobilePullToDismiss();
     this.setupVoiceNote();
     this.setupCertificateDownload();
     this.registerServiceWorker();
@@ -245,6 +247,7 @@ class UniverseApp {
         }
 
         // 3. Konfeti ve kutlama
+        this.triggerHaptic(25);
         this.triggerCosmicConfetti();
         input.value = '';
         closeWishModal();
@@ -344,9 +347,15 @@ class UniverseApp {
   // Portalı Aç & Kutlama Yap
   openPortal() {
     const portal = document.getElementById('portal-overlay');
+    const container = document.querySelector('.portal-glass-container');
+    if (container) {
+      container.scrollTop = 0;
+      container.style.transform = '';
+    }
     portal.classList.add('active');
     document.body.classList.add('portal-open');
 
+    this.triggerHaptic(20);
     this.triggerCosmicConfetti();
 
     if (!cosmicAudio.isPlaying) {
@@ -356,8 +365,13 @@ class UniverseApp {
 
   closePortal() {
     const portal = document.getElementById('portal-overlay');
+    const container = document.querySelector('.portal-glass-container');
+    if (container) {
+      container.style.transform = '';
+    }
     portal.classList.remove('active');
     document.body.classList.remove('portal-open');
+    this.triggerHaptic(15);
 
     if (this.galaxyEngine) {
       this.galaxyEngine.resetCameraView();
@@ -454,6 +468,7 @@ class UniverseApp {
 
     if (seal && envelope) {
       seal.addEventListener('click', () => {
+        this.triggerHaptic(25);
         envelope.classList.toggle('opened');
         cosmicAudio.playChime();
         if (envelope.classList.contains('opened')) {
@@ -489,6 +504,7 @@ class UniverseApp {
 
     if (nextBtn) {
       nextBtn.addEventListener('click', () => {
+        this.triggerHaptic(12);
         const nextIdx = (this.currentReasonIndex + 1) % CONFIG.reasons.length;
         cosmicAudio.playSynthNote(523.25 + Math.random() * 200, 1.5);
         showReason(nextIdx);
@@ -573,34 +589,192 @@ class UniverseApp {
     }
   }
 
-  // Tab Geçişleri
+  // 📳 Haptic Titreşim Geri Bildirimi (Android & Destekleyen Tarayıcılar)
+  triggerHaptic(duration = 15) {
+    if ('vibrate' in navigator && typeof navigator.vibrate === 'function') {
+      try {
+        navigator.vibrate(duration);
+      } catch (e) {}
+    }
+  }
+
+  // ⏱️ Mobil Kompakt Segmentli Sayaç Geçişi
+  setupCounterToggle() {
+    const pills = document.querySelectorAll('.counter-pill-btn');
+    const elapsedBox = document.getElementById('counter-box-elapsed');
+    const annivBox = document.getElementById('counter-box-anniv');
+
+    pills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        const target = pill.dataset.target;
+        pills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+
+        this.triggerHaptic(12);
+
+        if (target === 'elapsed') {
+          if (elapsedBox) elapsedBox.classList.add('mobile-active');
+          if (annivBox) annivBox.classList.remove('mobile-active');
+        } else {
+          if (annivBox) annivBox.classList.add('mobile-active');
+          if (elapsedBox) elapsedBox.classList.remove('mobile-active');
+        }
+      });
+    });
+  }
+
+  // 📑 Sekme Geçişleri, Yatay Kayan Çubuk Odaklaması ve Dokunmatik Jestler
   setupTabs() {
-    const tabButtons = document.querySelectorAll('.portal-tab-btn');
+    const tabButtons = Array.from(document.querySelectorAll('.portal-tab-btn'));
     const tabPanels = document.querySelectorAll('.portal-tab-panel');
+
+    const activateTab = (targetId, triggerHaptics = true) => {
+      const btn = tabButtons.find(b => b.dataset.tab === targetId);
+      if (!btn) return;
+
+      tabButtons.forEach(b => b.classList.remove('active'));
+      tabPanels.forEach(p => p.classList.remove('active'));
+
+      btn.classList.add('active');
+      const targetPanel = document.getElementById(`tab-${targetId}`);
+      if (targetPanel) {
+        targetPanel.classList.add('active');
+      }
+
+      // Mobilde aktif olan sekmeyi tek satır yatay çubukta ortala
+      try {
+        btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      } catch (e) {}
+
+      if (triggerHaptics) {
+        this.triggerHaptic(15);
+      }
+
+      // Eğer Yıldız Haritası sekmesi seçildiyse teleskop motorunu başlat/yenile
+      if (targetId === 'starmap') {
+        setTimeout(() => {
+          this.initStarMap();
+        }, 80);
+      }
+
+      cosmicAudio.playSynthNote(440, 0.8);
+    };
 
     tabButtons.forEach(btn => {
       btn.addEventListener('click', () => {
-        const targetId = btn.dataset.tab;
-
-        tabButtons.forEach(b => b.classList.remove('active'));
-        tabPanels.forEach(p => p.classList.remove('active'));
-
-        btn.classList.add('active');
-        const targetPanel = document.getElementById(`tab-${targetId}`);
-        if (targetPanel) {
-          targetPanel.classList.add('active');
-        }
-
-        // Eğer Yıldız Haritası sekmesi seçildiyse teleskop motorunu başlat/yenile
-        if (targetId === 'starmap') {
-          setTimeout(() => {
-            this.initStarMap();
-          }, 80);
-        }
-
-        cosmicAudio.playSynthNote(440, 0.8);
+        activateTab(btn.dataset.tab);
       });
     });
+
+    // Sekmeler arası parmakla sola/sağa kaydırma (Swipe Gestures)
+    this.setupSwipeTabs(tabButtons, activateTab);
+  }
+
+  // 👆 Parmakla Sola/Sağa Kaydırarak Sekme Değiştirme (Swipe Gestures)
+  setupSwipeTabs(tabButtons, activateTab) {
+    const body = document.querySelector('.portal-content-body');
+    if (!body) return;
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    body.addEventListener('touchstart', (e) => {
+      if (e.touches.length !== 1) return;
+      const target = e.target;
+      // 3D planetarium haritası, form girdileri, butonlar veya mühür üzerinde gezinirken sekme kaydırmayı engelle
+      if (
+        target.closest('#planetarium-canvas-container') ||
+        target.closest('input') ||
+        target.closest('textarea') ||
+        target.closest('button') ||
+        target.closest('.timeline-card') ||
+        target.closest('.wax-seal') ||
+        target.closest('.polaroid-card')
+      ) {
+        touchStartX = 0;
+        touchStartY = 0;
+        return;
+      }
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    body.addEventListener('touchend', (e) => {
+      if (touchStartX === 0 && touchStartY === 0) return;
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+
+      const deltaX = touchEndX - touchStartX;
+      const deltaY = touchEndY - touchStartY;
+
+      touchStartX = 0;
+      touchStartY = 0;
+
+      // Yatayda belirgin kaydırma eşiği (65px ve yatay hareket dikey hareketin 1.5 katı)
+      if (Math.abs(deltaX) > 65 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+        const activeBtn = document.querySelector('.portal-tab-btn.active');
+        if (!activeBtn) return;
+        const currentIndex = tabButtons.indexOf(activeBtn);
+        if (currentIndex === -1) return;
+
+        if (deltaX < 0) {
+          // Sola kaydırıldı -> Sıradaki sekme
+          const nextIndex = (currentIndex + 1) % tabButtons.length;
+          activateTab(tabButtons[nextIndex].dataset.tab);
+        } else {
+          // Sağa kaydırıldı -> Önceki sekme
+          const prevIndex = (currentIndex - 1 + tabButtons.length) % tabButtons.length;
+          activateTab(tabButtons[prevIndex].dataset.tab);
+        }
+      }
+    }, { passive: true });
+  }
+
+  // 📐 Mobilde Aşağı Çekerek Kapatma (Pull Down to Dismiss)
+  setupMobilePullToDismiss() {
+    const handle = document.getElementById('mobile-pull-handle');
+    const container = document.querySelector('.portal-glass-container');
+    if (!handle || !container) return;
+
+    let startY = 0;
+    let currentY = 0;
+    let isDragging = false;
+
+    handle.addEventListener('touchstart', (e) => {
+      if (e.touches.length !== 1) return;
+      startY = e.touches[0].clientY;
+      currentY = startY;
+      isDragging = true;
+      container.style.transition = 'none';
+    }, { passive: true });
+
+    handle.addEventListener('touchmove', (e) => {
+      if (!isDragging || e.touches.length !== 1) return;
+      currentY = e.touches[0].clientY;
+      const deltaY = currentY - startY;
+      if (deltaY > 0) {
+        container.style.transform = `translateY(${deltaY}px)`;
+      }
+    }, { passive: true });
+
+    const finishDrag = () => {
+      if (!isDragging) return;
+      isDragging = false;
+      container.style.transition = 'transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
+      const deltaY = currentY - startY;
+      if (deltaY > 75) {
+        this.triggerHaptic(20);
+        this.closePortal();
+        setTimeout(() => {
+          container.style.transform = '';
+        }, 400);
+      } else {
+        container.style.transform = '';
+      }
+    };
+
+    handle.addEventListener('touchend', finishDrag);
+    handle.addEventListener('touchcancel', finishDrag);
   }
 
   // 🎙️ SESLİ AŞK NOTU OYNATICISI
