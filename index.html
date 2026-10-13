@@ -27,7 +27,7 @@
   <!-- 3D Galaksi Canvas Alanı -->
   <div id="galaxy-canvas-container"></div>
 
-  <!-- Üst Gezinme & Müzik Barı -->
+  <!-- Üst Gezinme & Kontrol Barı -->
   <header class="cosmic-header">
     <div class="brand-badge">
       <span class="sparkle-icon">✦</span>
@@ -35,12 +35,24 @@
     </div>
 
     <div class="header-controls">
-      <!-- Müzik Çalar Butonu -->
+      <!-- 1. Takımyıldızı Çizim Butonu -->
+      <button id="constellation-toggle-btn" class="cosmic-btn glass-btn" title="Kozmik Kalp Takımyıldızını Göster/Gizle">
+        <span class="btn-icon">✨</span>
+        <span class="btn-text">Takımyıldızı</span>
+      </button>
+
+      <!-- 2. Kayan Yıldıza Dilek Tut Butonu -->
+      <button id="wish-meteor-btn" class="cosmic-btn glass-btn" title="Gökyüzüne Dilek Gönder">
+        <span class="btn-icon">🌠</span>
+        <span class="btn-text">Dilek Tut</span>
+      </button>
+
+      <!-- 3. Ambient Müzik Butonu -->
       <button id="music-toggle-btn" class="cosmic-btn glass-btn" title="Müziği Başlat / Durdur">
         <div class="music-visualizer" id="music-visualizer">
           <span></span><span></span><span></span><span></span>
         </div>
-        <span class="music-label" id="music-status-text">Müziği Başlat</span>
+        <span class="music-label" id="music-status-text">Müzik</span>
       </button>
     </div>
   </header>
@@ -49,7 +61,7 @@
   <div class="galaxy-instructions" id="galaxy-instructions">
     <div class="hint-pill">
       <span class="pulse-dot"></span>
-      <span id="galaxy-hint">Galaksiyi keşfetmek için sürükle, parlayan yıldıza tıklayarak bizim dünyamıza gir ✨</span>
+      <span id="galaxy-hint">Galaksiyi keşfetmek için sürükle, parlayan yıldıza tıklayarak dünyamıza gir ✨</span>
     </div>
   </div>
 
@@ -76,7 +88,7 @@
         <span>✕</span> Galaksiye Dön
       </button>
 
-      <!-- Portalı Açan Başlık ve Canlı Sayaç -->
+      <!-- Portalı Açan Başlık ve Canlı Sayaçlar -->
       <div class="portal-hero">
         <div class="star-badge-glow">
           <span class="badge-icon">⭐</span>
@@ -90,31 +102,63 @@
           "Karanlık bir evrende, kalbimi aydınlatan en parlak yıldız sensin..."
         </p>
 
-        <!-- Canlı Aşk Sayacı -->
-        <div class="love-counter-box">
-          <div class="counter-header">
-            <span class="heart-pulse">❤️</span>
-            <span>Seninle Başlayan Sonsuzluk</span>
+        <!-- SAYAÇLAR ALANI: GEÇEN ZAMAN & 1. YIL GERİ SAYIMI -->
+        <div class="counters-wrapper">
+          <!-- 1. Canlı Aşk Sayacı (Geçen Zaman) -->
+          <div class="love-counter-box">
+            <div class="counter-header">
+              <span class="heart-pulse">❤️</span>
+              <span>Seninle Başlayan Sonsuzluk</span>
+            </div>
+            <div class="counter-grid">
+              <div class="counter-unit">
+                <span class="counter-val" id="counter-days">0</span>
+                <span class="counter-lbl">Gün</span>
+              </div>
+              <div class="counter-sep">:</div>
+              <div class="counter-unit">
+                <span class="counter-val" id="counter-hours">00</span>
+                <span class="counter-lbl">Saat</span>
+              </div>
+              <div class="counter-sep">:</div>
+              <div class="counter-unit">
+                <span class="counter-val" id="counter-mins">00</span>
+                <span class="counter-lbl">Dakika</span>
+              </div>
+              <div class="counter-sep">:</div>
+              <div class="counter-unit">
+                <span class="counter-val" id="counter-secs">00</span>
+                <span class="counter-lbl">Saniye</span>
+              </div>
+            </div>
           </div>
-          <div class="counter-grid">
-            <div class="counter-unit">
-              <span class="counter-val" id="counter-days">0</span>
-              <span class="counter-lbl">Gün</span>
+
+          <!-- 2. 1. Yıl Dönümü Geri Sayımı (20 Ocak 2027) -->
+          <div class="love-counter-box anniversary-box">
+            <div class="counter-header">
+              <span>🎂</span>
+              <span>1. Yılımıza Kalan Süre</span>
             </div>
-            <div class="counter-sep">:</div>
-            <div class="counter-unit">
-              <span class="counter-val" id="counter-hours">00</span>
-              <span class="counter-lbl">Saat</span>
-            </div>
-            <div class="counter-sep">:</div>
-            <div class="counter-unit">
-              <span class="counter-val" id="counter-mins">00</span>
-              <span class="counter-lbl">Dakika</span>
-            </div>
-            <div class="counter-sep">:</div>
-            <div class="counter-unit">
-              <span class="counter-val" id="counter-secs">00</span>
-              <span class="counter-lbl">Saniye</span>
+            <div class="counter-grid">
+              <div class="counter-unit">
+                <span class="counter-val countdown-val" id="anniv-days">0</span>
+                <span class="counter-lbl">Gün</span>
+              </div>
+              <div class="counter-sep">:</div>
+              <div class="counter-unit">
+                <span class="counter-val countdown-val" id="anniv-hours">00</span>
+                <span class="counter-lbl">Saat</span>
+              </div>
+              <div class="counter-sep">:</div>
+              <div class="counter-unit">
+                <span class="counter-val countdown-val" id="anniv-mins">00</span>
+                <span class="counter-lbl">Dakika</span>
+              </div>
+              <div class="counter-sep">:</div>
+              <div class="counter-unit">
+                <span class="counter-val countdown-val" id="anniv-secs">00</span>
+                <span class="counter-lbl">Saniye</span>
+              </div>
             </div>
           </div>
         </div>
@@ -131,14 +175,20 @@
         <button class="portal-tab-btn" data-tab="letter">
           <span class="tab-icon">💌</span> Aşk Mektubu
         </button>
+        <button class="portal-tab-btn" data-tab="capsule">
+          <span class="tab-icon">🔐</span> Zaman Kapsülü
+        </button>
         <button class="portal-tab-btn" data-tab="reasons">
-          <span class="tab-icon">💖</span> Seni Sevme Sebeplerim
+          <span class="tab-icon">💖</span> 100 Neden
         </button>
         <button class="portal-tab-btn" data-tab="gallery">
           <span class="tab-icon">📸</span> Galeri
         </button>
         <button class="portal-tab-btn" data-tab="dreams">
-          <span class="tab-icon">🌠</span> Gelecek Hayallerimiz
+          <span class="tab-icon">🌠</span> Hayallerimiz
+        </button>
+        <button class="portal-tab-btn" data-tab="spotify">
+          <span class="tab-icon">🎧</span> Şarkımız
         </button>
       </nav>
 
@@ -245,7 +295,36 @@
           </div>
         </div>
 
-        <!-- 4. SEKME: SENİ SEVME SEBEPLERİM -->
+        <!-- 4. SEKME: KİLİTLİ ZAMAN KAPSÜLÜ (20 OCAK 2027) -->
+        <div class="portal-tab-panel" id="tab-capsule">
+          <div class="capsule-wrapper">
+            <div class="capsule-card" id="capsule-card">
+              <div class="capsule-lock-icon" id="capsule-lock-icon">🔒</div>
+              <h2 id="capsule-title">1. Yıl Dönümü Kozmik Zaman Kapsülü</h2>
+              <p class="capsule-teaser" id="capsule-teaser">
+                Bu kapsül 20 Ocak 2027 tarihinde (tam 1 yılımızı doldurduğumuz an) açılacaktır. O güne kadar gizemini korur!
+              </p>
+              
+              <div class="capsule-countdown-pill" id="capsule-countdown-display">
+                <span class="capsule-pill-icon">⏳</span>
+                <span id="capsule-time-left">Kilit Açılmasına Kalan: Hesaplanıyor...</span>
+              </div>
+
+              <!-- Mektup Alanı (Kilit açılınca veya önizleme ile gösterilir) -->
+              <div class="capsule-letter-box" id="capsule-letter-box" style="display: none;">
+                <div class="capsule-letter-inner">
+                  <p id="capsule-letter-content"></p>
+                </div>
+              </div>
+
+              <button id="peek-capsule-btn" class="peek-capsule-btn">
+                <span>Merak Ettim, Gizlice Bak 🤫</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. SEKME: SENİ SEVME SEBEPLERİM -->
         <div class="portal-tab-panel" id="tab-reasons">
           <div class="reasons-wrapper">
             <div class="reasons-header">
@@ -265,7 +344,7 @@
           </div>
         </div>
 
-        <!-- 5. SEKME: FOTOĞRAF GALERİSİ -->
+        <!-- 6. SEKME: FOTOĞRAF GALERİSİ -->
         <div class="portal-tab-panel" id="tab-gallery">
           <div class="gallery-intro">
             <h2>Kozmik Hatıralarımız 📸</h2>
@@ -276,7 +355,7 @@
           </div>
         </div>
 
-        <!-- 6. SEKME: GELECEK HAYALLERİMİZ (DİLEK YILDIZI) -->
+        <!-- 7. SEKME: GELECEK HAYALLERİMİZ (DİLEK YILDIZI) -->
         <div class="portal-tab-panel" id="tab-dreams">
           <div class="dreams-wrapper">
             <div class="dreams-header">
@@ -297,7 +376,66 @@
           </div>
         </div>
 
+        <!-- 8. SEKME: SPOTIFY & BİZİM ŞARKIMIZ -->
+        <div class="portal-tab-panel" id="tab-spotify">
+          <div class="spotify-wrapper">
+            <div class="spotify-intro">
+              <h2>Bizim Müziğimiz 🎧</h2>
+              <p>Evrenimizi keşfederken senin için seçtiğim bu şarkı bize eşlik etsin...</p>
+            </div>
+            
+            <div class="spotify-player-frame">
+              <iframe id="spotify-iframe" style="border-radius:16px" src="" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            </div>
+          </div>
+        </div>
+
       </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- DİLEK TUT & KAYAN YILDIZA FIRLAT MODALI        -->
+  <!-- ============================================== -->
+  <div id="wish-modal" class="cosmic-modal">
+    <div class="cosmic-modal-box">
+      <button class="modal-close-btn" id="close-wish-modal-btn">✕</button>
+      <div class="modal-header">
+        <span class="modal-icon">🌠</span>
+        <h3>Gökyüzüne Bir Dilek Bırak</h3>
+        <p>Yazdığın dilek parıldayan bir kayan yıldıza dönüşüp galaksimize karışacak...</p>
+      </div>
+      <form id="launch-wish-form">
+        <textarea id="wish-input" rows="3" placeholder="Kalbinden geçen dileği veya Ecrin'e mesajını yaz..." required></textarea>
+        <button type="submit" class="launch-wish-btn">
+          <span>Yıldızlara Fırlat</span> 🚀✨
+        </button>
+      </form>
+      
+      <!-- Önceki Dilekler -->
+      <div class="previous-wishes-box">
+        <h4>Galakside Saklanan Dileklerimiz</h4>
+        <div class="wishes-cloud" id="wishes-cloud">
+          <!-- JS ile doldurulacak -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- GİZLİ YILDIZ (EASTER EGG) MODALI              -->
+  <!-- ============================================== -->
+  <div id="secret-star-modal" class="cosmic-modal">
+    <div class="cosmic-modal-box secret-star-box">
+      <button class="modal-close-btn" id="close-secret-modal-btn">✕</button>
+      <div class="secret-sparkle-crest">🤫 💖 ✦</div>
+      <h3 id="secret-star-title">Tebrikler Sevgilim, Gizli Yıldızı Buldun!</h3>
+      <div class="secret-text-content" id="secret-star-text">
+        <!-- JS ile doldurulacak -->
+      </div>
+      <button class="love-confirm-btn" id="secret-love-btn">
+        <span>Seni Çok Seviyorum! ❤️</span>
+      </button>
     </div>
   </div>
 

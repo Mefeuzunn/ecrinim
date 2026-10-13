@@ -168,12 +168,32 @@ export const CONFIG = {
     { text: "Saçlarımız beyazlayana kadar el ele yürümek", done: false }
   ],
 
-  // Müzik ayarları
+  // 1. Yıl Dönümü Tarihi (Geri sayım için: 20 Ocak 2027)
+  anniversaryDate: new Date(2027, 0, 20, 0, 0, 0),
+
+  // Galaksideki Gizli Yıldız (Paskalya Yumurtası)
+  secretStar: {
+    title: "Tebrikler Sevgilim, Gizli Yıldızı Buldun! 🤫💖",
+    message: "Bu koca evrenin en ıssız köşesinde saklı duran bu yıldızı bulabildiysen bil ki kalbimin en derin yerindesin.\n\nHerkesin gördüğü o parlak yıldızımız bir yana; sadece ikimizin bildiği küçük sırlarımız, fısıltılarımız ve gülüşmelerimiz bu gizli yıldızda saklı.\n\nSeni bu evrenin sınırlarının da ötesinde çok seviyorum Ecrin...",
+    date: "Sonsuzluğun Gizli Köşesi"
+  },
+
+  // 1. Yıl Dönümünde Açılacak Kilitli Zaman Kapsülü
+  timeCapsule: {
+    unlockDate: new Date(2027, 0, 20, 0, 0, 0),
+    title: "1. Yıl Dönümü Kozmik Zaman Kapsülü 🔐",
+    teaser: "Bu kapsülün içinde 20 Ocak 2027 tarihinde (tam 1 yılımızı doldurduğumuz gün) açılacak gizli bir mektup mühürlenmiştir. O güne kadar kilitli kalacaktır!",
+    secretLetter: "Canım sevgilim Ecrin,\n\nBugün seninle tam 365 günü, yani koskoca 1 yılı geride bıraktık! Bu mektubu siteyi ilk hazırladığım gün buraya mühürlemiştim ve şimdi buradasın.\n\nSeninle geçen her bir günüm bir öncekinden daha güzel, daha huzurlu ve daha aşık geçti. Bana kattığın güzellikler, yüzümdeki her bir tebessüm için teşekkür ederim. Birlikte kutlayacağımız nice 10'larca, 50'lerce yıla sevgilim!\n\nİyi ki varsın, 1. yılımız kutlu olsun birtanem! ❤️"
+  },
+
+  // Müzik & Spotify ayarları
   music: {
-    // Kendi şarkını eklemek istersen assets/music/ klasörüne bir mp3 atıp adını buraya yazabilirsin:
-    // Örnek: "assets/music/sarkimiz.mp3"
     customAudioPath: "",
     defaultSongTitle: "Kozmik Piyano & Kalp Atışları",
-    artist: "Bizim Şarkımız"
+    artist: "Bizim Şarkımız",
+    // Spotify Şarkı / Çalma Listesi Embed Kodu (Örn: track veya playlist ID)
+    // Varsayılan olarak romantik bir parça ekli, istenirse kolayca değiştirilebilir:
+    spotifyTrackUrl: "https://open.spotify.com/embed/track/1BxfuPKGuaTgP7aM0Xbd3L?utm_source=generator&theme=0"
   }
 };
+

@@ -1,31 +1,45 @@
 /**
  * 3D KOZMİK GALAKSİ VE ÖZEL YILDIZ MOTORU (THREE.JS)
  * 
- * - 50.000+ parçacıklı dönen sarmal galaksi
- * - Arka plan yıldız kümesi ve kayan yıldızlar (meteorlar)
- * - "Ecrin'in Yıldızı" özel ışık küresi, halkaları ve 3D etiketi
- * - Yumuşak kamera animasyonları ve etkileşimler
+ * - 50.000+ parçacıklı sarmal galaksi
+ * - "Ecrin'in Yıldızı" (Ana Odak)
+ * - "Gizli Yıldız" (Paskalya Yumurtası / Easter Egg)
+ * - "Kozmik Kalp & E♥E Takımyıldızı" (Açılıp kapatılabilen göksel çizgiler)
+ * - "Dilek Kayan Yıldızı" (Özel animasyonlu meteor fırlatma sistemi)
  */
 
 import { CONFIG } from './config.js';
 import { cosmicAudio } from './audio.js';
 
 export class GalaxyEngine {
-  constructor(canvasContainer, onStarSelected) {
+  constructor(canvasContainer, onStarSelected, onSecretStarSelected) {
     this.container = canvasContainer;
     this.onStarSelected = onStarSelected;
+    this.onSecretStarSelected = onSecretStarSelected;
 
     this.scene = null;
     this.camera = null;
     this.renderer = null;
     this.galaxyPoints = null;
+    
+    // Özel Yıldız
     this.specialStarGroup = null;
     this.specialStarMesh = null;
     this.specialStarPos = new THREE.Vector3(14, 2.5, 9);
+    
+    // Gizli Yıldız (Easter Egg)
+    this.secretStarGroup = null;
+    this.secretStarMesh = null;
+    this.secretStarPos = new THREE.Vector3(-22, 6, -14);
+
+    // Takımyıldızı Grubu (Kozmik Kalp)
+    this.constellationGroup = null;
+    this.isConstellationVisible = false;
+
     this.shootingStars = [];
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
-    this.isHoveringStar = false;
+    this.hoveredObject = null;
     this.isTransitioning = false;
 
     // Kamera kontrol değişkenleri
@@ -33,19 +47,18 @@ export class GalaxyEngine {
     this.previousMousePosition = { x: 0, y: 0 };
     this.cameraTarget = new THREE.Vector3(0, 0, 0);
     this.cameraDistance = 45;
-    this.cameraPhi = Math.PI / 3.2; // dikey açı
-    this.cameraTheta = Math.PI / 4;  // yatay açı
+    this.cameraPhi = Math.PI / 3.2;
+    this.cameraTheta = Math.PI / 4;
     this.targetTheta = this.cameraTheta;
     this.targetPhi = this.cameraPhi;
     this.targetDistance = this.cameraDistance;
 
-    // Yıldız etiketi elementi
+    // 3D Etiket elementi
     this.starLabelEl = document.getElementById('special-star-label');
 
     this.init();
   }
 
-  // Parçacıklar için yumuşak parıldayan ışık dokusu üretir (Harici resim gerektirmez!)
   createStarTexture() {
     const canvas = document.createElement('canvas');
     canvas.width = 64;
@@ -61,8 +74,7 @@ export class GalaxyEngine {
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, 64, 64);
 
-    const texture = new THREE.CanvasTexture(canvas);
-    return texture;
+    return new THREE.CanvasTexture(canvas);
   }
 
   init() {
@@ -82,19 +94,21 @@ export class GalaxyEngine {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.container.appendChild(this.renderer.domElement);
 
-    // 4. Işıklandırmalar
+    // 4. Işık
     const ambientLight = new THREE.AmbientLight(0x221133, 1.2);
     this.scene.add(ambientLight);
 
-    // 5. Galaksi ve Yıldızları Oluştur
+    // 5. Göksel Cisimler
     this.buildGalaxy();
     this.buildStarfield();
     this.buildSpecialStar();
+    this.buildSecretStar();
+    this.buildConstellation();
 
     // 6. Olay Dinleyicileri
     this.setupEvents();
 
-    // 7. Render Döngüsü Başlat
+    // 7. Render Döngüsü
     this.clock = new THREE.Clock();
     this.animate();
   }
@@ -108,8 +122,8 @@ export class GalaxyEngine {
       spin: 1.1,
       randomness: 0.5,
       power: 3.2,
-      insideColor: '#ffd6e8', // Gül pembesi & sıcak altın çekirdek
-      outsideColor: '#7b52ff' // Derin kozmik leylak & yıldız mavisi
+      insideColor: '#ffd6e8',
+      outsideColor: '#7b52ff'
     };
 
     const geometry = new THREE.BufferGeometry();
@@ -122,13 +136,11 @@ export class GalaxyEngine {
     const colorCore = new THREE.Color('#fff7e6');
 
     for (let i = 0; i < parameters.count; i++) {
-      // Yarıçap (merkeze doğru daha yoğun)
       const i3 = i * 3;
       const radius = Math.random() * parameters.radius;
       const spinAngle = radius * parameters.spin;
       const branchAngle = ((i % parameters.branches) / parameters.branches) * Math.PI * 2;
 
-      // Dağılım rastgeleliği
       const randomX = Math.pow(Math.random(), parameters.power) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius;
       const randomY = Math.pow(Math.random(), parameters.power) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius * 0.45;
       const randomZ = Math.pow(Math.random(), parameters.power) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius;
@@ -137,7 +149,6 @@ export class GalaxyEngine {
       positions[i3 + 1] = randomY;
       positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius + randomZ;
 
-      // Renk geçişi (Çekirdek -> Dış kollar)
       const mixedColor = colorInside.clone();
       mixedColor.lerp(colorOutside, radius / parameters.radius);
 
@@ -173,7 +184,6 @@ export class GalaxyEngine {
     this.scene.add(this.galaxyPoints);
   }
 
-  // Uzak arka plan yıldızları
   buildStarfield() {
     const starCount = 3500;
     const geometry = new THREE.BufferGeometry();
@@ -214,48 +224,27 @@ export class GalaxyEngine {
     this.scene.add(starfield);
   }
 
-  // "Ecrin'in Yıldızı" - Ana odak noktası ve ışık saçan yıldız
   buildSpecialStar() {
     this.specialStarGroup = new THREE.Group();
     this.specialStarGroup.position.copy(this.specialStarPos);
 
-    // 1. Çekirdek Kristal Yıldız (Mesh)
     const coreGeo = new THREE.SphereGeometry(0.75, 32, 32);
-    const coreMat = new THREE.MeshBasicMaterial({
-      color: 0xfff0f5,
-      transparent: true,
-      opacity: 0.95
-    });
+    const coreMat = new THREE.MeshBasicMaterial({ color: 0xfff0f5, transparent: true, opacity: 0.95 });
     this.specialStarMesh = new THREE.Mesh(coreGeo, coreMat);
-    this.specialStarMesh.userData = { isSpecialStar: true };
+    this.specialStarMesh.userData = { type: 'special' };
     this.specialStarGroup.add(this.specialStarMesh);
 
-    // 2. İç Parıltı Halesi (Büyük Sprite)
     const starTex = this.createStarTexture();
-    const haloMat = new THREE.SpriteMaterial({
-      map: starTex,
-      color: 0xff99bb,
-      transparent: true,
-      blending: THREE.AdditiveBlending,
-      opacity: 0.85
-    });
+    const haloMat = new THREE.SpriteMaterial({ map: starTex, color: 0xff99bb, transparent: true, blending: THREE.AdditiveBlending, opacity: 0.85 });
     this.starHaloSprite = new THREE.Sprite(haloMat);
     this.starHaloSprite.scale.set(7.5, 7.5, 1);
     this.specialStarGroup.add(this.starHaloSprite);
 
-    // 3. İkinci Dış Parıltı (Altın & Pembe Korona)
-    const outerHaloMat = new THREE.SpriteMaterial({
-      map: starTex,
-      color: 0xffe6aa,
-      transparent: true,
-      blending: THREE.AdditiveBlending,
-      opacity: 0.65
-    });
+    const outerHaloMat = new THREE.SpriteMaterial({ map: starTex, color: 0xffe6aa, transparent: true, blending: THREE.AdditiveBlending, opacity: 0.65 });
     this.starOuterHalo = new THREE.Sprite(outerHaloMat);
     this.starOuterHalo.scale.set(12, 12, 1);
     this.specialStarGroup.add(this.starOuterHalo);
 
-    // 4. Yıldızın etrafındaki dönen minik yıldız tozu halkası (Satürn misali)
     const ringGeo = new THREE.BufferGeometry();
     const ringCount = 180;
     const ringPos = new Float32Array(ringCount * 3);
@@ -267,7 +256,6 @@ export class GalaxyEngine {
       ringPos[i * 3] = Math.cos(angle) * r;
       ringPos[i * 3 + 1] = (Math.random() - 0.5) * 0.25;
       ringPos[i * 3 + 2] = Math.sin(angle) * r;
-
       ringColors[i * 3] = 1.0;
       ringColors[i * 3 + 1] = 0.85 + Math.random() * 0.15;
       ringColors[i * 3 + 2] = 0.95;
@@ -276,27 +264,135 @@ export class GalaxyEngine {
     ringGeo.setAttribute('position', new THREE.BufferAttribute(ringPos, 3));
     ringGeo.setAttribute('color', new THREE.BufferAttribute(ringColors, 3));
 
-    const ringMat = new THREE.PointsMaterial({
-      size: 0.25,
-      map: starTex,
-      transparent: true,
-      blending: THREE.AdditiveBlending,
-      vertexColors: true,
-      depthWrite: false
-    });
-
+    const ringMat = new THREE.PointsMaterial({ size: 0.25, map: starTex, transparent: true, blending: THREE.AdditiveBlending, vertexColors: true, depthWrite: false });
     this.starRing = new THREE.Points(ringGeo, ringMat);
     this.starRing.rotation.x = Math.PI / 4;
     this.specialStarGroup.add(this.starRing);
 
-    // 5. Yıldızın Kendi Işık Kaynağı (PointLight)
     const starLight = new THREE.PointLight(0xffb6c1, 2.5, 30);
     this.specialStarGroup.add(starLight);
 
     this.scene.add(this.specialStarGroup);
   }
 
-  // Kayan yıldız (meteor) oluşturur
+  // 🤫 GİZLİ YILDIZ (EASTER EGG)
+  buildSecretStar() {
+    this.secretStarGroup = new THREE.Group();
+    this.secretStarGroup.position.copy(this.secretStarPos);
+
+    const coreGeo = new THREE.SphereGeometry(0.45, 24, 24);
+    const coreMat = new THREE.MeshBasicMaterial({ color: 0xccffff, transparent: true, opacity: 0.9 });
+    this.secretStarMesh = new THREE.Mesh(coreGeo, coreMat);
+    this.secretStarMesh.userData = { type: 'secret' };
+    this.secretStarGroup.add(this.secretStarMesh);
+
+    const starTex = this.createStarTexture();
+    const spriteMat = new THREE.SpriteMaterial({
+      map: starTex,
+      color: 0x99ffff,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      opacity: 0.75
+    });
+    this.secretStarSprite = new THREE.Sprite(spriteMat);
+    this.secretStarSprite.scale.set(4.5, 4.5, 1);
+    this.secretStarGroup.add(this.secretStarSprite);
+
+    this.scene.add(this.secretStarGroup);
+  }
+
+  // ✨ KOZMİK KALP TAKIMYILDIZI (CONSTELLATION)
+  buildConstellation() {
+    this.constellationGroup = new THREE.Group();
+    this.constellationGroup.visible = false;
+
+    // Kalp noktaları (Parametrik eğri)
+    const heartPoints = [];
+    const count = 32;
+    for (let i = 0; i <= count; i++) {
+      const t = (i / count) * Math.PI * 2;
+      const x = 16 * Math.pow(Math.sin(t), 3) * 0.42;
+      const y = (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * 0.42 + 4;
+      const z = Math.sin(t) * 2;
+      heartPoints.push(new THREE.Vector3(x, y, z));
+    }
+
+    // 1. Çizgi Geometrisi
+    const lineGeo = new THREE.BufferGeometry().setFromPoints(heartPoints);
+    const lineMat = new THREE.LineBasicMaterial({
+      color: 0xff85b3,
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending
+    });
+    const heartLine = new THREE.Line(lineGeo, lineMat);
+    this.constellationGroup.add(heartLine);
+
+    // 2. Düğüm Yıldızları (Node Points)
+    const starTex = this.createStarTexture();
+    const nodeGeo = new THREE.BufferGeometry().setFromPoints(heartPoints);
+    const nodeMat = new THREE.PointsMaterial({
+      size: 0.8,
+      map: starTex,
+      color: 0xffd1dc,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    const nodePoints = new THREE.Points(nodeGeo, nodeMat);
+    this.constellationGroup.add(nodePoints);
+
+    this.scene.add(this.constellationGroup);
+  }
+
+  // Takımyıldızını aç / kapat
+  toggleConstellation() {
+    this.isConstellationVisible = !this.isConstellationVisible;
+    if (this.constellationGroup) {
+      this.constellationGroup.visible = this.isConstellationVisible;
+    }
+    cosmicAudio.playChime();
+    return this.isConstellationVisible;
+  }
+
+  // 🌠 DİLEK İÇİN ÖZEL PARLAK KAYAN YILDIZ FIRLAT
+  launchWishMeteor() {
+    const startPos = new THREE.Vector3(0, 0, 0);
+    const endPos = new THREE.Vector3(
+      (Math.random() - 0.5) * 60,
+      25 + Math.random() * 20,
+      (Math.random() - 0.5) * 60
+    );
+
+    const dir = endPos.clone().sub(startPos).normalize();
+    const length = 20;
+
+    const geometry = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(0, 0, 0),
+      dir.clone().multiplyScalar(-length)
+    ]);
+
+    const material = new THREE.LineBasicMaterial({
+      color: 0xffd700,
+      transparent: true,
+      opacity: 1.0,
+      blending: THREE.AdditiveBlending
+    });
+
+    const line = new THREE.Line(geometry, material);
+    line.position.copy(startPos);
+    this.scene.add(line);
+
+    this.shootingStars.push({
+      mesh: line,
+      dir: dir,
+      speed: 2.8,
+      life: 1.6
+    });
+
+    cosmicAudio.playChime();
+  }
+
   spawnShootingStar() {
     const startX = (Math.random() - 0.5) * 70;
     const startY = 25 + Math.random() * 20;
@@ -331,8 +427,7 @@ export class GalaxyEngine {
 
   setupEvents() {
     const onPointerDown = (e) => {
-      // Eğer etkileşimli UI açıksa kamera sürüklemeyi engelle
-      if (document.body.classList.contains('portal-open')) return;
+      if (document.body.classList.contains('portal-open') || document.body.classList.contains('modal-active')) return;
       this.isDragging = true;
       this.previousMousePosition = {
         x: e.clientX || (e.touches && e.touches[0].clientX) || 0,
@@ -344,24 +439,21 @@ export class GalaxyEngine {
       const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
       const clientY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
 
-      // Raycaster için normalize fare koordinatları
       this.mouse.x = (clientX / window.innerWidth) * 2 - 1;
       this.mouse.y = -(clientY / window.innerHeight) * 2 + 1;
 
-      if (this.isDragging && !document.body.classList.contains('portal-open')) {
+      if (this.isDragging && !document.body.classList.contains('portal-open') && !document.body.classList.contains('modal-active')) {
         const deltaX = clientX - this.previousMousePosition.x;
         const deltaY = clientY - this.previousMousePosition.y;
 
         this.targetTheta += deltaX * 0.006;
         this.targetPhi -= deltaY * 0.006;
-
-        // Phi açısını sınırla (kutup taklasını önle)
         this.targetPhi = Math.max(0.15, Math.min(Math.PI - 0.15, this.targetPhi));
 
         this.previousMousePosition = { x: clientX, y: clientY };
       }
 
-      this.checkStarHover();
+      this.checkHover();
     };
 
     const onPointerUp = () => {
@@ -369,16 +461,19 @@ export class GalaxyEngine {
     };
 
     const onWheel = (e) => {
-      if (document.body.classList.contains('portal-open')) return;
+      if (document.body.classList.contains('portal-open') || document.body.classList.contains('modal-active')) return;
       this.targetDistance += e.deltaY * 0.04;
       this.targetDistance = Math.max(14, Math.min(80, this.targetDistance));
     };
 
-    // Tıklama ile yıldızı seçme
     const onClick = (e) => {
       if (this.isTransitioning) return;
-      if (this.isHoveringStar) {
+      if (this.hoveredObject === 'special') {
         this.selectSpecialStar();
+      } else if (this.hoveredObject === 'secret') {
+        if (this.onSecretStarSelected) {
+          this.onSecretStarSelected();
+        }
       }
     };
 
@@ -393,7 +488,6 @@ export class GalaxyEngine {
     window.addEventListener('wheel', onWheel, { passive: true });
     window.addEventListener('click', onClick);
 
-    // Etiket üzerine tıklanınca da yıldız seçilsin
     if (this.starLabelEl) {
       this.starLabelEl.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -401,7 +495,6 @@ export class GalaxyEngine {
       });
     }
 
-    // Ekran yeniden boyutlandırma
     window.addEventListener('resize', () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
@@ -411,35 +504,43 @@ export class GalaxyEngine {
     });
   }
 
-  checkStarHover() {
-    if (!this.specialStarMesh || this.isTransitioning) return;
+  checkHover() {
+    if (this.isTransitioning) return;
 
     this.raycaster.setFromCamera(this.mouse, this.camera);
-    const intersects = this.raycaster.intersectObjects([this.specialStarMesh]);
+    const targets = [];
+    if (this.specialStarMesh) targets.push(this.specialStarMesh);
+    if (this.secretStarMesh) targets.push(this.secretStarMesh);
 
-    const wasHovering = this.isHoveringStar;
-    this.isHoveringStar = intersects.length > 0;
+    const intersects = this.raycaster.intersectObjects(targets);
 
-    if (this.isHoveringStar !== wasHovering) {
-      document.body.style.cursor = this.isHoveringStar ? 'pointer' : 'default';
+    if (intersects.length > 0) {
+      const objType = intersects[0].object.userData.type;
+      this.hoveredObject = objType;
+      document.body.style.cursor = 'pointer';
+
       if (this.starLabelEl) {
-        if (this.isHoveringStar) {
+        if (objType === 'special') {
           this.starLabelEl.classList.add('hovered');
         } else {
           this.starLabelEl.classList.remove('hovered');
         }
       }
+    } else {
+      this.hoveredObject = null;
+      document.body.style.cursor = 'default';
+      if (this.starLabelEl) {
+        this.starLabelEl.classList.remove('hovered');
+      }
     }
   }
 
-  // Yıldızın ekran üzerindeki 2D koordinatını günceller (etiket için)
   updateStarLabelPosition() {
     if (!this.starLabelEl || !this.specialStarGroup) return;
 
     const starWorldPos = new THREE.Vector3();
     this.specialStarGroup.getWorldPosition(starWorldPos);
 
-    // Kameranın arkasındaysa gizle
     const camDir = new THREE.Vector3();
     this.camera.getWorldDirection(camDir);
     const toStar = starWorldPos.clone().sub(this.camera.position).normalize();
@@ -459,31 +560,25 @@ export class GalaxyEngine {
     this.starLabelEl.style.pointerEvents = 'auto';
   }
 
-  // Yıldıza tıklandığında kamera o yıldıza doğru uçar
   selectSpecialStar() {
     if (this.isTransitioning) return;
     this.isTransitioning = true;
 
-    // Şık ses ve parıltı efekti
     cosmicAudio.playChime();
 
-    // Kamerayı yıldıza yaklaştır
     const startCamPos = this.camera.position.clone();
     const starPos = this.specialStarPos.clone();
-    
-    // Yıldızın hemen önünde duracak hedef kamera konumu
     const targetCamPos = starPos.clone().add(new THREE.Vector3(2.5, 1.2, 4.5));
     const startTarget = this.cameraTarget.clone();
 
     let progress = 0;
-    const duration = 1600; // ms
+    const duration = 1600;
     const startTime = performance.now();
 
     const transitionAnim = (now) => {
       const elapsed = now - startTime;
       progress = Math.min(elapsed / duration, 1);
       
-      // Yumuşak easeInOutCubic eğrisi
       const ease = progress < 0.5
         ? 4 * progress * progress * progress
         : 1 - Math.pow(-2 * progress + 2, 3) / 2;
@@ -505,7 +600,6 @@ export class GalaxyEngine {
     requestAnimationFrame(transitionAnim);
   }
 
-  // Galaksi genel bakışına geri dön
   resetCameraView() {
     this.targetDistance = 45;
     this.targetTheta = Math.PI / 4;
@@ -514,7 +608,6 @@ export class GalaxyEngine {
   }
 
   updateCameraPosition() {
-    // Sönümlü (damping) yumuşak kamera takibi
     this.cameraTheta += (this.targetTheta - this.cameraTheta) * 0.06;
     this.cameraPhi += (this.targetPhi - this.cameraPhi) * 0.06;
     this.cameraDistance += (this.targetDistance - this.cameraDistance) * 0.06;
@@ -537,17 +630,15 @@ export class GalaxyEngine {
     const delta = this.clock.getDelta();
     const time = this.clock.getElapsedTime();
 
-    // 1. Galaksi yavaşça dönsün
+    // Galaksi dönüşü
     if (this.galaxyPoints) {
       this.galaxyPoints.rotation.y = time * 0.035;
     }
 
-    // 2. Özel Yıldız animasyonları (Pulsing halo & orbiting ring)
+    // Özel Yıldız nabız atışı
     if (this.specialStarGroup) {
       const pulse = Math.sin(time * 2.8) * 0.15 + 1.0;
-      if (this.starHaloSprite) {
-        this.starHaloSprite.scale.set(7.5 * pulse, 7.5 * pulse, 1);
-      }
+      if (this.starHaloSprite) this.starHaloSprite.scale.set(7.5 * pulse, 7.5 * pulse, 1);
       if (this.starOuterHalo) {
         const outerPulse = Math.cos(time * 1.8) * 0.12 + 1.0;
         this.starOuterHalo.scale.set(12 * outerPulse, 12 * outerPulse, 1);
@@ -558,7 +649,18 @@ export class GalaxyEngine {
       }
     }
 
-    // 3. Kayan Yıldızlar (Meteorlar)
+    // Gizli Yıldız ışıltısı
+    if (this.secretStarSprite) {
+      const secPulse = Math.sin(time * 3.5) * 0.25 + 1.0;
+      this.secretStarSprite.scale.set(4.5 * secPulse, 4.5 * secPulse, 1);
+    }
+
+    // Takımyıldızı hafif salınımı
+    if (this.constellationGroup && this.isConstellationVisible) {
+      this.constellationGroup.rotation.y = Math.sin(time * 0.5) * 0.05;
+    }
+
+    // Kayan Yıldızlar
     if (Math.random() < 0.012) {
       this.spawnShootingStar();
     }
@@ -577,19 +679,15 @@ export class GalaxyEngine {
       }
     }
 
-    // 4. Kamera Güncellemesi
+    // Kamera güncellemesi
     if (!this.isTransitioning) {
-      // Kullanıcı sürüklemediğinde galaksi hafifçe dönsün
-      if (!this.isDragging && !document.body.classList.contains('portal-open')) {
+      if (!this.isDragging && !document.body.classList.contains('portal-open') && !document.body.classList.contains('modal-active')) {
         this.targetTheta += delta * 0.02;
       }
       this.updateCameraPosition();
     }
 
-    // 5. 3D Yıldız Etiketi Pozisyonu
     this.updateStarLabelPosition();
-
-    // 6. Çizim
     this.renderer.render(this.scene, this.camera);
   }
 }

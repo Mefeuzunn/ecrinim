@@ -1,11 +1,12 @@
 /**
  * ANA UYGULAMA MANTIĞI & ARAYÜZ YÖNETİCİSİ
  * 
- * - Galaksi ve 3D Yıldız etkileşimi
- * - Canlı Aşk Sayacı (Gün, Saat, Dakika, Saniye)
- * - Mühürlü Aşk Mektubu Zarf Animasyonu
- * - Zaman Tüneli, Galeri, Nedenler ve Dilek Listesi
- * - Lightbox Fotoğraf Büyüteci ve Konfeti Efektleri
+ * - Galaksi, Özel Yıldız ve Gizli Yıldız (Easter Egg)
+ * - Kozmik Kalp Takımyıldızı Açma/Kapama
+ * - Kayan Yıldıza Dilek Tutma & Fırlatma
+ * - Canlı Aşk Sayacı ve 1. Yıl Dönümü Geri Sayımı (20 Ocak 2027)
+ * - Kilitli Zaman Kapsülü ve Spotify Çalar
+ * - Mühürlü Aşk Mektubu, Zaman Tüneli, Galeri ve Dilek Listesi
  */
 
 import { CONFIG } from './config.js';
@@ -16,6 +17,7 @@ class UniverseApp {
   constructor() {
     this.currentReasonIndex = 0;
     this.dreams = [];
+    this.wishes = [];
     this.galaxyEngine = null;
     this.timerInterval = null;
 
@@ -29,21 +31,28 @@ class UniverseApp {
     // 2. Ses motorunu hazırla
     cosmicAudio.init();
 
-    // 3. 3D Galaksi Motorunu Başlat
+    // 3. 3D Galaksi Motorunu Başlat (Özel Yıldız & Gizli Yıldız Callbackleri)
     const canvasContainer = document.getElementById('galaxy-canvas-container');
-    this.galaxyEngine = new GalaxyEngine(canvasContainer, () => {
-      this.openPortal();
-    });
+    this.galaxyEngine = new GalaxyEngine(
+      canvasContainer,
+      () => this.openPortal(),
+      () => this.openSecretStarModal()
+    );
 
-    // 4. Aşk Sayacını Başlat
-    this.startLoveCounter();
+    // 4. Sayaçları Başlat (Geçen Zaman + 1. Yıl Geri Sayımı)
+    this.startLoveCounters();
 
-    // 5. İçerikleri Render Et
+    // 5. İçerikleri ve Özellikleri Başlat
     this.renderTimeline();
     this.renderGallery();
     this.renderReasons();
     this.initBucketList();
     this.setupLetterEnvelope();
+    this.setupTimeCapsule();
+    this.setupSpotify();
+    this.setupConstellationButton();
+    this.setupWishSystem();
+    this.setupSecretStarModal();
     this.setupTabs();
     this.setupMusicControls();
     this.setupLightbox();
@@ -74,57 +83,268 @@ class UniverseApp {
     const starMagEl = document.getElementById('star-mag-display');
     if (starMagEl) starMagEl.textContent = CONFIG.star.magnitude;
 
-    // Karşılama ipucu
     const actionHint = document.getElementById('galaxy-hint');
     if (actionHint) actionHint.textContent = CONFIG.welcome.actionHint;
   }
 
-  // Canlı Aşk Sayacı
-  startLoveCounter() {
-    const updateCounter = () => {
+  // Canlı Sayaçlar (Birlikte Geçen Süre + 1. Yıl Geri Sayımı)
+  startLoveCounters() {
+    const updateCounters = () => {
       const now = new Date();
+      
+      // 1. Geçen Zaman Sayacı (20 Ocak 2026'dan beri)
       const start = new Date(CONFIG.startDate);
-      const diffMs = now - start;
+      const diffPassed = now - start;
 
-      if (diffMs < 0) {
-        document.getElementById('counter-days').textContent = '0';
-        document.getElementById('counter-hours').textContent = '0';
-        document.getElementById('counter-mins').textContent = '0';
-        document.getElementById('counter-secs').textContent = '0';
-        return;
+      if (diffPassed > 0) {
+        const totalSecs = Math.floor(diffPassed / 1000);
+        const days = Math.floor(totalSecs / (3600 * 24));
+        const hours = Math.floor((totalSecs % (3600 * 24)) / 3600);
+        const minutes = Math.floor((totalSecs % 3600) / 60);
+        const seconds = totalSecs % 60;
+
+        const dEl = document.getElementById('counter-days');
+        const hEl = document.getElementById('counter-hours');
+        const mEl = document.getElementById('counter-mins');
+        const sEl = document.getElementById('counter-secs');
+
+        if (dEl) dEl.textContent = days;
+        if (hEl) hEl.textContent = hours.toString().padStart(2, '0');
+        if (mEl) mEl.textContent = minutes.toString().padStart(2, '0');
+        if (sEl) sEl.textContent = seconds.toString().padStart(2, '0');
       }
 
-      const totalSeconds = Math.floor(diffMs / 1000);
-      const days = Math.floor(totalSeconds / (3600 * 24));
-      const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
+      // 2. 1. Yıl Dönümü Geri Sayımı (20 Ocak 2027)
+      const anniversary = new Date(CONFIG.anniversaryDate);
+      const diffRemaining = anniversary - now;
 
-      const dEl = document.getElementById('counter-days');
-      const hEl = document.getElementById('counter-hours');
-      const mEl = document.getElementById('counter-mins');
-      const sEl = document.getElementById('counter-secs');
+      const aDEl = document.getElementById('anniv-days');
+      const aHEl = document.getElementById('anniv-hours');
+      const aMEl = document.getElementById('anniv-mins');
+      const aSEl = document.getElementById('anniv-secs');
+      const capsuleTimeLeft = document.getElementById('capsule-time-left');
 
-      if (dEl) dEl.textContent = days;
-      if (hEl) hEl.textContent = hours.toString().padStart(2, '0');
-      if (mEl) mEl.textContent = minutes.toString().padStart(2, '0');
-      if (sEl) sEl.textContent = seconds.toString().padStart(2, '0');
+      if (diffRemaining > 0) {
+        const totalRemSecs = Math.floor(diffRemaining / 1000);
+        const remDays = Math.floor(totalRemSecs / (3600 * 24));
+        const remHours = Math.floor((totalRemSecs % (3600 * 24)) / 3600);
+        const remMins = Math.floor((totalRemSecs % 3600) / 60);
+        const remSecs = totalRemSecs % 60;
+
+        if (aDEl) aDEl.textContent = remDays;
+        if (aHEl) aHEl.textContent = remHours.toString().padStart(2, '0');
+        if (aMEl) aMEl.textContent = remMins.toString().padStart(2, '0');
+        if (aSEl) aSEl.textContent = remSecs.toString().padStart(2, '0');
+
+        if (capsuleTimeLeft) {
+          capsuleTimeLeft.textContent = `Açılmasına: ${remDays} Gün ${remHours} Saat ${remMins} Dakika ${remSecs} Saniye kaldı`;
+        }
+      } else {
+        if (aDEl) aDEl.textContent = '0';
+        if (aHEl) aHEl.textContent = '00';
+        if (aMEl) aMEl.textContent = '00';
+        if (aSEl) aSEl.textContent = '00';
+        if (capsuleTimeLeft) {
+          capsuleTimeLeft.textContent = '🎉 1. Yılımız Kutlu Olsun! Kilit Açıldı!';
+        }
+      }
     };
 
-    updateCounter();
-    this.timerInterval = setInterval(updateCounter, 1000);
+    updateCounters();
+    this.timerInterval = setInterval(updateCounters, 1000);
   }
 
-  // Yıldız Seçildiğinde Portalı Aç ve Kutlama Yap
+  // ✨ TAKIMYILDIZI ÇİZİM BUTONU
+  setupConstellationButton() {
+    const btn = document.getElementById('constellation-toggle-btn');
+    if (!btn) return;
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!this.galaxyEngine) return;
+      const isVisible = this.galaxyEngine.toggleConstellation();
+      if (isVisible) {
+        btn.classList.add('active');
+        this.triggerCosmicConfetti();
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+
+  // 🌠 DİLEK TUTMA SİSTEMİ
+  setupWishSystem() {
+    const wishBtn = document.getElementById('wish-meteor-btn');
+    const modal = document.getElementById('wish-modal');
+    const closeBtn = document.getElementById('close-wish-modal-btn');
+    const form = document.getElementById('launch-wish-form');
+    const input = document.getElementById('wish-input');
+    const cloud = document.getElementById('wishes-cloud');
+
+    // Kayıtlı dilekleri yükle
+    const saved = localStorage.getItem('cosmic_wishes');
+    if (saved) {
+      try {
+        this.wishes = JSON.parse(saved);
+      } catch (e) {
+        this.wishes = ["Sonsuza kadar seninle olmak ✨", "Gözlerinin hiç solmaması 🌸"];
+      }
+    } else {
+      this.wishes = ["Sonsuza kadar seninle olmak ✨", "Gözlerinin hiç solmaması 🌸"];
+    }
+
+    const renderWishesCloud = () => {
+      if (!cloud) return;
+      cloud.innerHTML = this.wishes.map(w => `<span class="wish-tag">✦ ${w}</span>`).join('');
+    };
+
+    renderWishesCloud();
+
+    const openWishModal = () => {
+      if (modal) {
+        modal.classList.add('active');
+        document.body.classList.add('modal-active');
+        cosmicAudio.playSynthNote(440, 1.0);
+      }
+    };
+
+    const closeWishModal = () => {
+      if (modal) {
+        modal.classList.remove('active');
+        document.body.classList.remove('modal-active');
+      }
+    };
+
+    if (wishBtn) wishBtn.addEventListener('click', openWishModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeWishModal);
+
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeWishModal();
+      });
+    }
+
+    if (form && input) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const wishText = input.value.trim();
+        if (!wishText) return;
+
+        // 1. Dileği kaydet
+        this.wishes.unshift(wishText);
+        localStorage.setItem('cosmic_wishes', JSON.stringify(this.wishes));
+        renderWishesCloud();
+
+        // 2. Galakside parıldayan kayan yıldız fırlat
+        if (this.galaxyEngine) {
+          this.galaxyEngine.launchWishMeteor();
+        }
+
+        // 3. Konfeti ve kutlama
+        this.triggerCosmicConfetti();
+        input.value = '';
+        closeWishModal();
+      });
+    }
+  }
+
+  // 🤫 GİZLİ YILDIZ (EASTER EGG) MODALI
+  setupSecretStarModal() {
+    const modal = document.getElementById('secret-star-modal');
+    const closeBtn = document.getElementById('close-secret-modal-btn');
+    const loveBtn = document.getElementById('secret-love-btn');
+
+    const closeModal = () => {
+      if (modal) {
+        modal.classList.remove('active');
+        document.body.classList.remove('modal-active');
+      }
+    };
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (loveBtn) {
+      loveBtn.addEventListener('click', () => {
+        this.triggerCosmicConfetti();
+        closeModal();
+      });
+    }
+
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+    }
+  }
+
+  openSecretStarModal() {
+    const modal = document.getElementById('secret-star-modal');
+    const titleEl = document.getElementById('secret-star-title');
+    const textEl = document.getElementById('secret-star-text');
+
+    if (titleEl) titleEl.textContent = CONFIG.secretStar.title;
+    if (textEl) textEl.textContent = CONFIG.secretStar.message;
+
+    if (modal) {
+      modal.classList.add('active');
+      document.body.classList.add('modal-active');
+      cosmicAudio.playChime();
+      this.triggerCosmicConfetti();
+    }
+  }
+
+  // ⏳ ZAMAN KAPSÜLÜ YÖNETİMİ
+  setupTimeCapsule() {
+    const titleEl = document.getElementById('capsule-title');
+    const teaserEl = document.getElementById('capsule-teaser');
+    const letterBox = document.getElementById('capsule-letter-box');
+    const letterContent = document.getElementById('capsule-letter-content');
+    const peekBtn = document.getElementById('peek-capsule-btn');
+    const lockIcon = document.getElementById('capsule-lock-icon');
+
+    if (titleEl) titleEl.textContent = CONFIG.timeCapsule.title;
+    if (teaserEl) teaserEl.textContent = CONFIG.timeCapsule.teaser;
+    if (letterContent) letterContent.textContent = CONFIG.timeCapsule.secretLetter;
+
+    const now = new Date();
+    const isUnlocked = now >= new Date(CONFIG.timeCapsule.unlockDate);
+
+    if (isUnlocked) {
+      if (lockIcon) lockIcon.textContent = '🔓';
+      if (letterBox) letterBox.style.display = 'block';
+      if (peekBtn) peekBtn.style.display = 'none';
+    } else {
+      if (peekBtn) {
+        peekBtn.addEventListener('click', () => {
+          if (letterBox.style.display === 'none') {
+            letterBox.style.display = 'block';
+            peekBtn.textContent = 'Gizli Mektubu Gizle 🙈';
+            cosmicAudio.playChime();
+            this.triggerCosmicConfetti();
+          } else {
+            letterBox.style.display = 'none';
+            peekBtn.textContent = 'Merak Ettim, Gizlice Bak 🤫';
+          }
+        });
+      }
+    }
+  }
+
+  // 🎧 SPOTIFY ENTEGRASYONU
+  setupSpotify() {
+    const iframe = document.getElementById('spotify-iframe');
+    if (iframe && CONFIG.music.spotifyTrackUrl) {
+      iframe.src = CONFIG.music.spotifyTrackUrl;
+    }
+  }
+
+  // Portalı Aç & Kutlama Yap
   openPortal() {
     const portal = document.getElementById('portal-overlay');
     portal.classList.add('active');
     document.body.classList.add('portal-open');
 
-    // Büyüleyici Konfeti Patlaması
     this.triggerCosmicConfetti();
 
-    // Eğer müzik henüz açık değilse ilk tıklamada otomatik başlat
     if (!cosmicAudio.isPlaying) {
       cosmicAudio.play();
     }
@@ -142,9 +362,8 @@ class UniverseApp {
 
   triggerCosmicConfetti() {
     if (typeof confetti === 'function') {
-      // Kalp ve yıldız tozu renkleri
       confetti({
-        particleCount: 75,
+        particleCount: 80,
         spread: 90,
         origin: { y: 0.6 },
         colors: ['#ff99c8', '#fcf6bd', '#d0f4de', '#a9def9', '#e4c1f9', '#ffffff']
@@ -220,10 +439,8 @@ class UniverseApp {
   setupLetterEnvelope() {
     const seal = document.getElementById('envelope-wax-seal');
     const envelope = document.getElementById('love-envelope');
-    const letterPaper = document.getElementById('letter-paper');
     const contentBox = document.getElementById('letter-paragraphs');
 
-    // Mektup metnini doldur
     if (contentBox) {
       document.getElementById('letter-salutation').textContent = CONFIG.letter.salutation;
       contentBox.innerHTML = CONFIG.letter.content.map(p => `<p>${p}</p>`).join('');
@@ -372,7 +589,6 @@ class UniverseApp {
       });
     }
 
-    // İlk kullanıcı etkileşiminde ses context'ini uyandır
     const unlockAudio = () => {
       cosmicAudio.ensureAudioContext();
       window.removeEventListener('click', unlockAudio);
@@ -403,7 +619,6 @@ class UniverseApp {
       if (modal) modal.classList.remove('active');
     };
 
-    // Zaman tüneli ve galeri kartlarına tıklama
     document.addEventListener('click', (e) => {
       const card = e.target.closest('[data-full]');
       if (card) {
@@ -424,7 +639,6 @@ class UniverseApp {
   }
 
   setupGeneralEvents() {
-    // Portalı Kapat ve Galaksiye Dön
     const closeBtn = document.getElementById('close-portal-btn');
     if (closeBtn) {
       closeBtn.addEventListener('click', () => {
@@ -432,12 +646,20 @@ class UniverseApp {
       });
     }
 
-    // Esc tuşu ile kapatma
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         const lightbox = document.getElementById('lightbox-modal');
+        const wishModal = document.getElementById('wish-modal');
+        const secretModal = document.getElementById('secret-star-modal');
+
         if (lightbox && lightbox.classList.contains('active')) {
           lightbox.classList.remove('active');
+        } else if (wishModal && wishModal.classList.contains('active')) {
+          wishModal.classList.remove('active');
+          document.body.classList.remove('modal-active');
+        } else if (secretModal && secretModal.classList.contains('active')) {
+          secretModal.classList.remove('active');
+          document.body.classList.remove('modal-active');
         } else {
           this.closePortal();
         }
