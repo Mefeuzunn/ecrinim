@@ -2094,6 +2094,74 @@ body.portal-open {
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6);
 }
 
+.song-title-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-radius: 30px;
+  background: rgba(29, 185, 84, 0.12);
+  border: 1px solid rgba(29, 185, 84, 0.4);
+  margin-top: 14px;
+}
+
+.song-note {
+  font-size: 1.1rem;
+}
+
+.song-name {
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.song-artist {
+  color: var(--color-primary-light);
+  font-size: 0.9rem;
+}
+
+.spotify-actions {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.spotify-direct-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 30px;
+  border-radius: 30px;
+  background: #1db954;
+  color: #050a06 !important;
+  font-family: var(--font-main);
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 10px 30px rgba(29, 185, 84, 0.4);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.spotify-direct-btn:hover {
+  background: #1ed760;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 14px 35px rgba(29, 185, 84, 0.6);
+  color: #000 !important;
+}
+
+.spotify-direct-btn svg {
+  fill: #050a06;
+}
+
+.spotify-direct-btn .btn-arrow {
+  font-size: 1.15rem;
+  transition: transform 0.2s;
+}
+
+.spotify-direct-btn:hover .btn-arrow {
+  transform: translate(2px, -2px);
+}
+
 /* ===================================================================
    GERÇEK ASTRONOMİK YILDIZ HARİTASI & PLANETARIUM STİLLERİ
    =================================================================== */

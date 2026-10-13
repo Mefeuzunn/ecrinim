@@ -342,6 +342,10 @@ class UniverseApp {
     if (iframe && CONFIG.music.spotifyTrackUrl) {
       iframe.src = CONFIG.music.spotifyTrackUrl;
     }
+    const directLink = document.getElementById('spotify-direct-link');
+    if (directLink && CONFIG.music.spotifyDirectUrl) {
+      directLink.href = CONFIG.music.spotifyDirectUrl;
+    }
   }
 
   // Portalı Aç & Kutlama Yap
@@ -1022,6 +1026,16 @@ class UniverseApp {
     if (closeBtn) {
       closeBtn.addEventListener('click', () => {
         this.closePortal();
+      });
+    }
+
+    const songHeaderBtn = document.getElementById('open-song-header-btn');
+    if (songHeaderBtn) {
+      songHeaderBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.openPortal();
+        const tabBtn = document.querySelector('.portal-tab-btn[data-tab="spotify"]');
+        if (tabBtn) tabBtn.click();
       });
     }
 

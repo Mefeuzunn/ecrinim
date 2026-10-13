@@ -48,6 +48,12 @@
         <span class="btn-text">Dilek Tut</span>
       </button>
 
+      <!-- 2. Bizim Şarkımız Butonu -->
+      <button id="open-song-header-btn" class="cosmic-btn glass-btn" title="Bizim Şarkımız: Seni Seviyorum (Spotify)">
+        <span class="btn-icon">🎧</span>
+        <span class="btn-text">Şarkımız</span>
+      </button>
+
       <!-- 3. Gerçek Yıldız Haritası Butonu -->
       <button id="open-starmap-header-btn" class="cosmic-btn glass-btn" title="Gerçek Yıldız Haritası & Teleskop">
         <span class="btn-icon">🔭</span>
@@ -466,12 +472,28 @@
         <div class="portal-tab-panel" id="tab-spotify">
           <div class="spotify-wrapper">
             <div class="spotify-intro">
-              <h2>Bizim Müziğimiz 🎧</h2>
-              <p>Evrenimizi keşfederken senin için seçtiğim bu şarkı bize eşlik etsin...</p>
+              <h2>Bizim Şarkımız 🎧</h2>
+              <p>Evrenimizi keşfederken senin için seçtiğim bu özel şarkı bize eşlik etsin...</p>
+              <div class="song-title-badge">
+                <span class="song-note">🎵</span>
+                <span class="song-name">Seni Seviyorum</span>
+                <span class="song-artist">— Bizim Şarkımız</span>
+              </div>
             </div>
             
             <div class="spotify-player-frame">
-              <iframe id="spotify-iframe" style="border-radius:16px" src="" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+              <iframe id="spotify-iframe" style="border-radius:16px" src="https://open.spotify.com/embed/track/3ShpooIC9O00sS8ra0AAJP?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            </div>
+
+            <!-- Doğrudan Spotify'da Açma Butonu -->
+            <div class="spotify-actions">
+              <a href="https://open.spotify.com/track/3ShpooIC9O00sS8ra0AAJP?si=G6Z9MRJBRgSp6mdZjvzYUA&utm_source=whatsapp" target="_blank" rel="noopener noreferrer" id="spotify-direct-link" class="spotify-direct-btn">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.494 17.306c-.215.353-.674.464-1.027.25-2.813-1.718-6.353-2.107-10.523-1.155-.403.092-.806-.16-.898-.563-.092-.403.16-.806.563-.898 4.567-1.043 8.487-.604 11.635 1.339.353.214.464.674.25 1.027zm1.468-3.26c-.27.441-.849.58-1.29.31-3.22-1.979-8.128-2.551-11.936-1.394-.499.151-1.031-.133-1.183-.632-.151-.499.133-1.031.632-1.183 4.356-1.323 9.779-.683 13.467 1.58.441.27.58.849.31 1.289zm.126-3.41c-3.86-2.292-10.226-2.503-13.896-1.388-.592.18-1.22-.158-1.4-.75-.18-.592.158-1.22.75-1.4 4.225-1.283 11.258-1.036 15.698 1.597.532.316.705 1.008.389 1.54-.316.533-1.008.706-1.541.401z"/>
+                </svg>
+                <span>Spotify Uygulamasında Dinle</span>
+                <span class="btn-arrow">↗</span>
+              </a>
             </div>
           </div>
         </div>

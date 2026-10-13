@@ -189,11 +189,11 @@ export const CONFIG = {
   // Müzik & Spotify ayarları
   music: {
     customAudioPath: "",
-    defaultSongTitle: "Kozmik Piyano & Kalp Atışları",
+    defaultSongTitle: "Seni Seviyorum",
     artist: "Bizim Şarkımız",
-    // Spotify Şarkı / Çalma Listesi Embed Kodu (Örn: track veya playlist ID)
-    // Varsayılan olarak romantik bir parça ekli, istenirse kolayca değiştirilebilir:
-    spotifyTrackUrl: "https://open.spotify.com/embed/track/1BxfuPKGuaTgP7aM0Xbd3L?utm_source=generator&theme=0"
+    // Spotify Şarkı Embed Kodu (Track ID: 3ShpooIC9O00sS8ra0AAJP)
+    spotifyTrackUrl: "https://open.spotify.com/embed/track/3ShpooIC9O00sS8ra0AAJP?utm_source=generator&theme=0",
+    spotifyDirectUrl: "https://open.spotify.com/track/3ShpooIC9O00sS8ra0AAJP?si=G6Z9MRJBRgSp6mdZjvzYUA&utm_source=whatsapp"
   },
 
   // Sesli Aşk Notu Ayarları (Kendi ses kaydını assets/music/ klasörüne atabilirsin)
