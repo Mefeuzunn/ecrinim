@@ -10,10 +10,8 @@ export const CONFIG = {
   partnerName: "Ecrin",
   yourName: "Efe",
 
-  // Birlikteliğinizin başladığı tarih (Format: YIL, AY (0-11 arası, örn: Ocak=0, Şubat=1..), GÜN, SAAT, DAKİKA)
-  // Örnek: 14 Şubat 2024 saat 19:30 için -> new Date(2024, 1, 14, 19, 30, 0)
-  // Varsayılan olarak 1 yıl önceki bir tarih ayarlandı:
-  startDate: new Date(2024, 4, 15, 20, 0, 0),
+  // Birlikteliğinizin başladığı tarih: 20 Ocak 2026 (20 Ocak 2027'de tam 365 gün olacak)
+  startDate: new Date(2026, 0, 20, 0, 0, 0),
 
   // Galaksideki Özel Yıldızın Bilgileri
   star: {
