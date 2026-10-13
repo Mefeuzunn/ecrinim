@@ -1797,3 +1797,148 @@ body.portal-open {
   border: 1px solid var(--glass-border);
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6);
 }
+
+/* ===================================================================
+   GERÇEK ASTRONOMİK YILDIZ HARİTASI & PLANETARIUM STİLLERİ
+   =================================================================== */
+.starmap-section {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 10px 0;
+}
+
+.starmap-intro {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.starmap-intro h2 {
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.starmap-intro p {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.planetarium-viewport-box {
+  position: relative;
+  width: 100%;
+  height: 560px;
+  background: radial-gradient(circle at center, #060312 0%, #020108 100%);
+  border-radius: 24px;
+  border: 1.5px solid rgba(125, 211, 252, 0.35);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(125, 211, 252, 0.2);
+  overflow: hidden;
+}
+
+.planetarium-canvas {
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+.planetarium-canvas:active {
+  cursor: grabbing;
+}
+
+.telescope-hud-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px;
+}
+
+.hud-target-card {
+  max-width: 380px;
+  background: rgba(10, 5, 24, 0.85);
+  border: 1px solid rgba(125, 211, 252, 0.45);
+  backdrop-filter: blur(18px);
+  border-radius: 18px;
+  padding: 20px 24px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6);
+  pointer-events: auto;
+  animation: fadeIn 0.5s ease;
+}
+
+.hud-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: rgba(14, 165, 233, 0.15);
+  border: 1px solid rgba(14, 165, 233, 0.4);
+  color: #38bdf8;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.hud-target-card h3 {
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.hud-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.hud-specs strong {
+  color: var(--color-cyan);
+}
+
+.hud-focus-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #0284c7 0%, #ec4899 100%);
+  border: none;
+  color: #fff;
+  font-family: var(--font-main);
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+  transition: all 0.3s ease;
+}
+
+.hud-focus-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(236, 72, 153, 0.5);
+}
+
+.hud-controls-hint {
+  align-self: center;
+  padding: 8px 20px;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(12px);
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  pointer-events: none;
+}

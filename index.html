@@ -47,7 +47,13 @@
         <span class="btn-text">Dilek Tut</span>
       </button>
 
-      <!-- 3. Ambient Müzik Butonu -->
+      <!-- 3. Gerçek Yıldız Haritası Butonu -->
+      <button id="open-starmap-header-btn" class="cosmic-btn glass-btn" title="Gerçek Yıldız Haritası & Teleskop">
+        <span class="btn-icon">🔭</span>
+        <span class="btn-text">Yıldız Haritası</span>
+      </button>
+
+      <!-- 4. Ambient Müzik Butonu -->
       <button id="music-toggle-btn" class="cosmic-btn glass-btn" title="Müziği Başlat / Durdur">
         <div class="music-visualizer" id="music-visualizer">
           <span></span><span></span><span></span><span></span>
@@ -186,6 +192,9 @@
         </button>
         <button class="portal-tab-btn" data-tab="dreams">
           <span class="tab-icon">🌠</span> Hayallerimiz
+        </button>
+        <button class="portal-tab-btn" data-tab="starmap">
+          <span class="tab-icon">🔭</span> Gerçek Yıldız Haritası
         </button>
         <button class="portal-tab-btn" data-tab="spotify">
           <span class="tab-icon">🎧</span> Şarkımız
@@ -376,7 +385,42 @@
           </div>
         </div>
 
-        <!-- 8. SEKME: SPOTIFY & BİZİM ŞARKIMIZ -->
+        <!-- 8. SEKME: GERÇEK ASTRONOMİK GÖKYÜZÜ VE YILDIZ HARİTASI -->
+        <div class="portal-tab-panel" id="tab-starmap">
+          <div class="starmap-section">
+            <div class="starmap-intro">
+              <h2>Trilyonlarca Yıldız Arasında Ecrin'in Yıldızı 🔭</h2>
+              <p>Gerçek gök koordinatlarında (RA 18h 36m 56s | Dec +38° 47′ 01″), Lir Takımyıldızında sadece senin adınla parlayan göksel tescilli yerin.</p>
+            </div>
+
+            <div class="planetarium-viewport-box">
+              <div id="planetarium-canvas-container" class="planetarium-canvas"></div>
+              
+              <!-- Teleskop HUD Bilgi Kartı -->
+              <div class="telescope-hud-overlay">
+                <div class="hud-target-card">
+                  <div class="hud-badge">🎯 TELESKOP HEDEFİ: KİLİTLENDİ</div>
+                  <h3>✦ Ecrin'in Yıldızı ✦</h3>
+                  <div class="hud-specs">
+                    <span><strong>Gök Koordinatı:</strong> RA 18h 36m 56s | Dec +38° 47′ 01″</span>
+                    <span><strong>Takımyıldızı:</strong> Lir (Lyra - Sonsuz Aşkın Çalgısı)</span>
+                    <span><strong>Mesafe:</strong> 25.04 Işık Yılı (Vega Civarı)</span>
+                    <span><strong>Parlaklık:</strong> Gözlerinin Işıltısı Kadar Saf</span>
+                  </div>
+                  <button id="focus-ecrin-star-btn" class="hud-focus-btn">
+                    <span>🎯 Yıldızıma Odaklan & Yakınlaş</span>
+                  </button>
+                </div>
+
+                <div class="hud-controls-hint">
+                  <span>🖱️ Gökyüzünde 360° gezinmek için sürükle, tekerlekle yakınlaş</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. SEKME: SPOTIFY & BİZİM ŞARKIMIZ -->
         <div class="portal-tab-panel" id="tab-spotify">
           <div class="spotify-wrapper">
             <div class="spotify-intro">

@@ -12,6 +12,7 @@
 import { CONFIG } from './config.js';
 import { GalaxyEngine } from './galaxy.js';
 import { cosmicAudio } from './audio.js';
+import { RealStarMapEngine } from './starmap.js';
 
 class UniverseApp {
   constructor() {
@@ -19,6 +20,7 @@ class UniverseApp {
     this.dreams = [];
     this.wishes = [];
     this.galaxyEngine = null;
+    this.starMapEngine = null;
     this.timerInterval = null;
 
     this.init();
@@ -556,6 +558,19 @@ class UniverseApp {
     });
   }
 
+  // 🔭 GERÇEK YILDIZ HARİTASI (PLANETARIUM) BAŞLATICI
+  initStarMap() {
+    if (!this.starMapEngine) {
+      this.starMapEngine = new RealStarMapEngine('planetarium-canvas-container');
+      const focusBtn = document.getElementById('focus-ecrin-star-btn');
+      if (focusBtn && this.starMapEngine) {
+        focusBtn.addEventListener('click', () => {
+          this.starMapEngine.focusOnEcrinStar();
+        });
+      }
+    }
+  }
+
   // Tab Geçişleri
   setupTabs() {
     const tabButtons = document.querySelectorAll('.portal-tab-btn');
@@ -572,6 +587,13 @@ class UniverseApp {
         const targetPanel = document.getElementById(`tab-${targetId}`);
         if (targetPanel) {
           targetPanel.classList.add('active');
+        }
+
+        // Eğer Yıldız Haritası sekmesi seçildiyse teleskop motorunu başlat/yenile
+        if (targetId === 'starmap') {
+          setTimeout(() => {
+            this.initStarMap();
+          }, 80);
         }
 
         cosmicAudio.playSynthNote(440, 0.8);
@@ -643,6 +665,16 @@ class UniverseApp {
     if (closeBtn) {
       closeBtn.addEventListener('click', () => {
         this.closePortal();
+      });
+    }
+
+    const starmapHeaderBtn = document.getElementById('open-starmap-header-btn');
+    if (starmapHeaderBtn) {
+      starmapHeaderBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.openPortal();
+        const tabBtn = document.querySelector('.portal-tab-btn[data-tab="starmap"]');
+        if (tabBtn) tabBtn.click();
       });
     }
 
