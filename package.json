@@ -2,11 +2,9 @@
   "name": "ecrinim",
   "version": "1.0.0",
   "description": "Ecrin'e Özel 3D Kozmik Galaksi ve Aşk Portalı",
-  "main": "server.js",
   "scripts": {
-    "build": "echo 'Static assets ready'",
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "node dev-server.js",
+    "dev": "node dev-server.js"
   },
   "keywords": [
     "galaxy",
