@@ -1,44 +1,32 @@
-const CACHE_NAME = 'ecrin-universe-v1';
-const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/css/style.css',
-  '/js/config.js',
-  '/js/galaxy.js',
-  '/js/starmap.js',
-  '/js/audio.js',
-  '/js/app.js',
-  '/manifest.json'
-];
+const CACHE_NAME = 'ecrin-universe-v3';
 
+// Yeni service worker yüklendiğinde hemen aktifleş
 self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
-  );
   self.skipWaiting();
 });
 
+// Eski tüm önbellekleri (v1, v2) tamamen sil ve yeni versiyonu sahiplen
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.map((k) => {
-          if (k !== CACHE_NAME) {
-            return caches.delete(k);
-          }
-        })
+        keys.map((k) => caches.delete(k))
       );
-    })
+    }).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
+// Network-First Stratejisi: Daima en güncel site içeriğini canlıdan al
 self.addEventListener('fetch', (e) => {
+  if (e.request.method !== 'GET') return;
+
   e.respondWith(
-    caches.match(e.request).then((res) => {
-      return res || fetch(e.request).catch(() => caches.match('/index.html'));
-    })
+    fetch(e.request)
+      .then((networkRes) => {
+        return networkRes;
+      })
+      .catch(() => {
+        return caches.match(e.request);
+      })
   );
 });

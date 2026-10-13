@@ -190,9 +190,11 @@ export const CONFIG = {
   music: {
     customAudioPath: "",
     defaultSongTitle: "Seni Seviyorum",
-    artist: "Bizim Şarkımız",
+    artist: "Bora Öztoprak",
+    albumCover: "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02ad45de517ff1bd676684adfe",
+    audioPreviewUrl: "https://p.scdn.co/mp3-preview/55fc2164a2bdc4ed87e1855977993c8fd62d5327",
     // Spotify Şarkı Embed Kodu (Track ID: 3ShpooIC9O00sS8ra0AAJP)
-    spotifyTrackUrl: "https://open.spotify.com/embed/track/3ShpooIC9O00sS8ra0AAJP?utm_source=generator&theme=0",
+    spotifyTrackUrl: "https://open.spotify.com/embed/track/3ShpooIC9O00sS8ra0AAJP?utm_source=oembed",
     spotifyDirectUrl: "https://open.spotify.com/track/3ShpooIC9O00sS8ra0AAJP?si=G6Z9MRJBRgSp6mdZjvzYUA&utm_source=whatsapp"
   },
 

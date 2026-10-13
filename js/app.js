@@ -9,7 +9,7 @@
  * - Mühürlü Aşk Mektubu, Zaman Tüneli, Galeri ve Dilek Listesi
  */
 
-import { CONFIG } from './config.js';
+import { CONFIG } from './config.js?v=3.1';
 import { GalaxyEngine } from './galaxy.js';
 import { cosmicAudio } from './audio.js';
 import { RealStarMapEngine } from './starmap.js';
@@ -345,6 +345,40 @@ class UniverseApp {
     const directLink = document.getElementById('spotify-direct-link');
     if (directLink && CONFIG.music.spotifyDirectUrl) {
       directLink.href = CONFIG.music.spotifyDirectUrl;
+    }
+
+    // Doğrudan Şarkı Önizleme Oynatıcısı (HTML5 Audio)
+    const previewBtn = document.getElementById('preview-play-btn');
+    const previewIcon = document.getElementById('preview-play-icon');
+    let previewAudio = null;
+    let isPlayingPreview = false;
+
+    if (CONFIG.music.audioPreviewUrl) {
+      previewAudio = new Audio(CONFIG.music.audioPreviewUrl);
+      previewAudio.addEventListener('ended', () => {
+        isPlayingPreview = false;
+        if (previewIcon) previewIcon.textContent = '▶';
+      });
+    }
+
+    if (previewBtn) {
+      previewBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.triggerHaptic(15);
+        if (!previewAudio) {
+          window.open(CONFIG.music.spotifyDirectUrl, '_blank');
+          return;
+        }
+
+        isPlayingPreview = !isPlayingPreview;
+        if (isPlayingPreview) {
+          if (previewIcon) previewIcon.textContent = '⏸';
+          previewAudio.play().catch(() => {});
+        } else {
+          if (previewIcon) previewIcon.textContent = '▶';
+          previewAudio.pause();
+        }
+      });
     }
   }
 
