@@ -115,9 +115,10 @@ export class GalaxyEngine {
   }
 
   buildGalaxy() {
+    const isMobile = window.innerWidth < 768;
     const parameters = {
-      count: 48000,
-      size: 0.18,
+      count: isMobile ? 24000 : 48000,
+      size: isMobile ? 0.22 : 0.18,
       radius: 32,
       branches: 4,
       spin: 1.1,
@@ -186,7 +187,8 @@ export class GalaxyEngine {
   }
 
   buildStarfield() {
-    const starCount = 3500;
+    const isMobile = window.innerWidth < 768;
+    const starCount = isMobile ? 1800 : 3500;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(starCount * 3);
     const colors = new Float32Array(starCount * 3);
@@ -505,14 +507,35 @@ export class GalaxyEngine {
     });
 
     // Mobil Jiroskop (Gyroscope Parallax) Desteği
-    if (window.DeviceOrientationEvent) {
-      window.addEventListener('deviceorientation', (e) => {
-        if (e.beta === null || e.gamma === null) return;
-        const tiltX = (e.beta - 45) * 0.005;
-        const tiltY = e.gamma * 0.005;
-        this.gyroOffset.x = Math.max(-0.25, Math.min(0.25, tiltX));
-        this.gyroOffset.y = Math.max(-0.25, Math.min(0.25, tiltY));
-      }, { passive: true });
+    const handleOrientation = (e) => {
+      if (e.beta === null || e.gamma === null) return;
+      const tiltX = (e.beta - 45) * 0.005;
+      const tiltY = e.gamma * 0.005;
+      this.gyroOffset.x = Math.max(-0.25, Math.min(0.25, tiltX));
+      this.gyroOffset.y = Math.max(-0.25, Math.min(0.25, tiltY));
+    };
+
+    if (typeof window !== 'undefined' && window.DeviceOrientationEvent) {
+      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        let requested = false;
+        const requestGyro = () => {
+          if (requested) return;
+          requested = true;
+          DeviceOrientationEvent.requestPermission()
+            .then((perm) => {
+              if (perm === 'granted') {
+                window.addEventListener('deviceorientation', handleOrientation, { passive: true });
+              }
+            })
+            .catch(() => {});
+          window.removeEventListener('click', requestGyro);
+          window.removeEventListener('touchend', requestGyro);
+        };
+        window.addEventListener('click', requestGyro, { once: true });
+        window.addEventListener('touchend', requestGyro, { once: true });
+      } else {
+        window.addEventListener('deviceorientation', handleOrientation, { passive: true });
+      }
     }
   }
 

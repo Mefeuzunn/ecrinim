@@ -19,15 +19,33 @@
   <!-- Canvas Confetti (Kozmik Kutlama Parçacıkları) -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
+  <meta name="description" content="Karanlık bir evrende, kalbimi aydınlatan en parlak yıldız sensin... Ecrin & Efe'nin sonsuz evreni.">
+
+  <!-- OpenGraph / WhatsApp / Instagram / Facebook Zengin Link Önizlemesi -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ecrinim-omega.vercel.app">
+  <meta property="og:title" content="Ecrin'in Galaksisi ✨ Sonsuz Evrenimiz">
+  <meta property="og:description" content="Milyarlarca yıldız arasında sadece senin için parlayan bir evren... Ecrin & Efe ❤️">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=1200&auto=format&fit=crop">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Ecrin'in Galaksisi ✨ Sonsuz Evrenimiz">
+  <meta name="twitter:description" content="Milyarlarca yıldız arasında sadece senin için parlayan bir evren... Ecrin & Efe ❤️">
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=1200&auto=format&fit=crop">
+
   <!-- PWA & Mobile Web App Desteği -->
   <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02ad45de517ff1bd676684adfe">
   <meta name="theme-color" content="#180a24">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Ecrinim">
 
   <!-- Özel Stiller -->
-  <link rel="stylesheet" href="css/style.css?v=3.1">
+  <link rel="stylesheet" href="css/style.css?v=3.2">
 </head>
 <body>
 
@@ -559,8 +577,10 @@
   </div>
 
   <!-- Fotoğraf Büyüteci (Lightbox Modal) -->
-  <div id="lightbox-modal" class="lightbox-modal">
-    <button class="lightbox-close" id="lightbox-close">✕</button>
+  <div id="lightbox-modal" class="lightbox-modal" aria-hidden="true">
+    <button class="lightbox-close" id="lightbox-close" aria-label="Kapat">✕</button>
+    <button class="lightbox-nav-btn lightbox-prev" id="lightbox-prev" aria-label="Önceki Fotoğraf">❮</button>
+    <button class="lightbox-nav-btn lightbox-next" id="lightbox-next" aria-label="Sonraki Fotoğraf">❯</button>
     <div class="lightbox-content">
       <img id="lightbox-img" src="" alt="Büyütülmüş Anı">
       <p id="lightbox-caption" class="lightbox-caption"></p>
@@ -568,6 +588,6 @@
   </div>
 
   <!-- Ana Uygulama Modülü -->
-  <script type="module" src="js/app.js?v=3.1"></script>
+  <script type="module" src="js/app.js?v=3.3"></script>
 </body>
 </html>

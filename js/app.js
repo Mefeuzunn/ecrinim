@@ -372,6 +372,9 @@ class UniverseApp {
 
         isPlayingPreview = !isPlayingPreview;
         if (isPlayingPreview) {
+          if (cosmicAudio.isPlaying) {
+            cosmicAudio.stop();
+          }
           if (previewIcon) previewIcon.textContent = '⏸';
           previewAudio.play().catch(() => {});
         } else {
@@ -695,7 +698,14 @@ class UniverseApp {
         }, 80);
       }
 
-      cosmicAudio.playSynthNote(440, 0.8);
+      // Eğer Spotify sekmesi seçildiyse arka plan piyano sesini duraklatarak şarkının net duyulmasını sağla
+      if (targetId === 'spotify') {
+        if (cosmicAudio.isPlaying) {
+          cosmicAudio.stop();
+        }
+      } else {
+        cosmicAudio.playSynthNote(440, 0.8);
+      }
     };
 
     tabButtons.forEach(btn => {
@@ -906,9 +916,13 @@ class UniverseApp {
     const btn = document.getElementById('download-cert-btn');
     if (!btn) return;
 
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       this.triggerCosmicConfetti();
       cosmicAudio.playChime();
+
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+      }
 
       const canvas = document.createElement('canvas');
       canvas.width = 1200;
@@ -1057,35 +1071,108 @@ class UniverseApp {
     const img = document.getElementById('lightbox-img');
     const caption = document.getElementById('lightbox-caption');
     const closeBtn = document.getElementById('lightbox-close');
+    const prevBtn = document.getElementById('lightbox-prev');
+    const nextBtn = document.getElementById('lightbox-next');
 
-    const openImage = (url, cap) => {
+    let currentItems = [];
+    let currentIndex = 0;
+
+    const showItem = (idx) => {
+      if (!currentItems.length || !img) return;
+      currentIndex = (idx + currentItems.length) % currentItems.length;
+      const item = currentItems[currentIndex];
+      img.src = item.url;
+      if (caption) {
+        const countPrefix = currentItems.length > 1 ? `(${currentIndex + 1}/${currentItems.length}) ` : '';
+        caption.textContent = `${countPrefix}${item.cap || ''}`;
+      }
+    };
+
+    const openImage = (clickedCard) => {
       if (!modal || !img) return;
-      img.src = url;
-      if (caption) caption.textContent = cap || '';
+      const container = clickedCard.closest('.portal-tab-panel') || document.body;
+      const elements = Array.from(container.querySelectorAll('[data-full]'));
+      currentItems = elements.map(el => ({
+        url: el.getAttribute('data-full'),
+        cap: el.getAttribute('data-caption')
+      }));
+
+      currentIndex = elements.indexOf(clickedCard);
+      if (currentIndex === -1) currentIndex = 0;
+
+      showItem(currentIndex);
       modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
     };
 
     const closeImage = () => {
-      if (modal) modal.classList.remove('active');
+      if (modal) {
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    };
+
+    const nextImage = () => {
+      this.triggerHaptic(10);
+      showItem(currentIndex + 1);
+    };
+
+    const prevImage = () => {
+      this.triggerHaptic(10);
+      showItem(currentIndex - 1);
     };
 
     document.addEventListener('click', (e) => {
       const card = e.target.closest('[data-full]');
       if (card) {
-        const full = card.getAttribute('data-full');
-        const cap = card.getAttribute('data-caption');
-        if (full) {
-          openImage(full, cap);
-        }
+        openImage(card);
       }
     });
 
     if (closeBtn) closeBtn.addEventListener('click', closeImage);
+    if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); nextImage(); });
+    if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); prevImage(); });
+
     if (modal) {
       modal.addEventListener('click', (e) => {
         if (e.target === modal) closeImage();
       });
+
+      // Dokunmatik Kaydırma (Touch Swipe) Desteği
+      let touchStartX = 0;
+      let touchStartY = 0;
+
+      modal.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+        }
+      }, { passive: true });
+
+      modal.addEventListener('touchend', (e) => {
+        if (e.changedTouches.length === 1) {
+          const deltaX = e.changedTouches[0].clientX - touchStartX;
+          const deltaY = e.changedTouches[0].clientY - touchStartY;
+          if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY) * 1.4) {
+            if (deltaX < 0) {
+              nextImage();
+            } else {
+              prevImage();
+            }
+          }
+        }
+      }, { passive: true });
     }
+
+    // Klavye Yön Tuşları ile Galeri Gezinmesi
+    window.addEventListener('keydown', (e) => {
+      if (!modal || !modal.classList.contains('active')) return;
+      if (e.key === 'ArrowRight') {
+        nextImage();
+      } else if (e.key === 'ArrowLeft') {
+        prevImage();
+      }
+    });
   }
 
   setupGeneralEvents() {
