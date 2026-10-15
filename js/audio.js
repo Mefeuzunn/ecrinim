@@ -177,6 +177,13 @@ class CosmicAudioPlayer {
     this.updateUi();
   }
 
+  stop() {
+    this.pause();
+    if (this.isUsingCustom && this.audioElement) {
+      this.audioElement.currentTime = 0;
+    }
+  }
+
   // Yıldız parıltısı / tıklama minik efekti
   playChime() {
     try {

@@ -627,6 +627,8 @@ class UniverseApp {
           this.starMapEngine.focusOnEcrinStar();
         });
       }
+    } else {
+      this.starMapEngine.onResize();
     }
   }
 

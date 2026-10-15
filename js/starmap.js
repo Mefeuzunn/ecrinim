@@ -401,6 +401,16 @@ export class RealStarMapEngine {
     requestAnimationFrame(anim);
   }
 
+  onResize() {
+    if (!this.container || !this.renderer || !this.camera) return;
+    const w = this.container.clientWidth || window.innerWidth;
+    const h = this.container.clientHeight || 550;
+    if (w === 0 || h === 0) return;
+    this.camera.aspect = w / h;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(w, h);
+  }
+
   setupEvents() {
     const onMouseDown = (e) => {
       this.isDragging = true;
@@ -449,12 +459,7 @@ export class RealStarMapEngine {
 
     // Yeniden Boyutlandırma
     window.addEventListener('resize', () => {
-      if (!this.container) return;
-      const w = this.container.clientWidth;
-      const h = this.container.clientHeight || 550;
-      this.camera.aspect = w / h;
-      this.camera.updateProjectionMatrix();
-      this.renderer.setSize(w, h);
+      this.onResize();
     });
   }
 
