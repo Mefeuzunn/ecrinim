@@ -620,6 +620,35 @@ class UniverseApp {
           this.starMapEngine.focusOnEcrinStar();
         });
       }
+
+      // 📱 Mobil Hızlı Zoom Butonları (+ / −)
+      const zoomInBtn = document.getElementById('starmap-zoom-in-btn');
+      const zoomOutBtn = document.getElementById('starmap-zoom-out-btn');
+      if (zoomInBtn && this.starMapEngine) {
+        zoomInBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.triggerHaptic(10);
+          this.starMapEngine.zoomIn();
+        });
+      }
+      if (zoomOutBtn && this.starMapEngine) {
+        zoomOutBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.triggerHaptic(10);
+          this.starMapEngine.zoomOut();
+        });
+      }
+
+      // 📱 Mobilde Hedef Kartını Açıp/Kapatma (Expand / Collapse)
+      const collapseBtn = document.getElementById('hud-collapse-btn');
+      const hudCard = document.getElementById('hud-target-card');
+      if (collapseBtn && hudCard) {
+        collapseBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.triggerHaptic(12);
+          hudCard.classList.toggle('collapsed');
+        });
+      }
     } else {
       this.starMapEngine.onResize();
     }
@@ -759,7 +788,9 @@ class UniverseApp {
       const target = e.target;
       // 3D planetarium haritası, form girdileri, butonlar veya mühür üzerinde gezinirken sekme kaydırmayı engelle
       if (
+        target.closest('.planetarium-viewport-box') ||
         target.closest('#planetarium-canvas-container') ||
+        target.closest('.telescope-hud-overlay') ||
         target.closest('input') ||
         target.closest('textarea') ||
         target.closest('button') ||

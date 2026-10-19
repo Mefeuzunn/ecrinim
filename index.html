@@ -460,12 +460,19 @@
             <div class="planetarium-viewport-box">
               <div id="planetarium-canvas-container" class="planetarium-canvas"></div>
               
-              <!-- Teleskop HUD Bilgi Kartı -->
+              <!-- Teleskop HUD Bilgi ve Kontrol Katmanı -->
               <div class="telescope-hud-overlay">
-                <div class="hud-target-card">
-                  <div class="hud-badge">🎯 TELESKOP HEDEFİ: KİLİTLENDİ</div>
+                <!-- Hedef Kartı (Mobilde Açılır / Kapanır) -->
+                <div class="hud-target-card" id="hud-target-card">
+                  <div class="hud-card-top-bar">
+                    <div class="hud-badge">🎯 HEDEF: KİLİTLENDİ</div>
+                    <button type="button" class="hud-collapse-toggle-btn" id="hud-collapse-btn" title="Detayları Gizle / Göster">
+                      <span class="toggle-text">Detaylar</span>
+                      <span class="toggle-arrow" id="hud-toggle-arrow">▾</span>
+                    </button>
+                  </div>
                   <h3>✦ Ecrin'in Yıldızı ✦</h3>
-                  <div class="hud-specs">
+                  <div class="hud-specs" id="hud-specs-box">
                     <span><strong>Gök Koordinatı:</strong> RA 18h 36m 56s | Dec +38° 47′ 01″</span>
                     <span><strong>Takımyıldızı:</strong> Lir (Lyra - Sonsuz Aşkın Çalgısı)</span>
                     <span><strong>Mesafe:</strong> 25.04 Işık Yılı (Vega Civarı)</span>
@@ -476,8 +483,16 @@
                   </button>
                 </div>
 
+                <!-- Mobilde Hızlı Zoom Kontrolleri (+ / −) -->
+                <div class="hud-floating-tools">
+                  <button type="button" class="hud-tool-btn" id="starmap-zoom-in-btn" title="Yakınlaş (Zoom In)" aria-label="Yakınlaş">+</button>
+                  <button type="button" class="hud-tool-btn" id="starmap-zoom-out-btn" title="Uzaklaş (Zoom Out)" aria-label="Uzaklaş">−</button>
+                </div>
+
+                <!-- Kullanım İpuçları (Cihaza Göre Dinamik) -->
                 <div class="hud-controls-hint">
-                  <span>🖱️ Gökyüzünde 360° gezinmek için sürükle, tekerlekle yakınlaş</span>
+                  <span class="hint-desktop">🖱️ Gökyüzünde 360° gezinmek için sürükle, tekerlekle yakınlaş</span>
+                  <span class="hint-mobile">👆 360° keşfetmek için sürükle, iki parmakla veya (+ / −) ile yakınlaş</span>
                 </div>
               </div>
             </div>
@@ -584,6 +599,6 @@
   </div>
 
   <!-- Ana Uygulama Modülü -->
-  <script type="module" src="js/app.js?v=3.5"></script>
+  <script type="module" src="js/app.js?v=3.6"></script>
 </body>
 </html>

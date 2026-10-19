@@ -96,7 +96,8 @@ export class RealStarMapEngine {
 
   // Samanyolu Kuşağı (Milky Way Band)
   buildMilkyWayGlow() {
-    const count = 8000;
+    const isMobile = window.innerWidth < 768;
+    const count = isMobile ? 4000 : 8000;
     const geo = new THREE.BufferGeometry();
     const pos = new Float32Array(count * 3);
     const col = new Float32Array(count * 3);
@@ -144,7 +145,8 @@ export class RealStarMapEngine {
 
   // Derin Uzay Arka Plan Yıldızları (12.000+ Gerçekçi Arka Plan Yıldızı)
   buildDeepStarfield() {
-    const starCount = 12000;
+    const isMobile = window.innerWidth < 768;
+    const starCount = isMobile ? 6000 : 12000;
     const geo = new THREE.BufferGeometry();
     const pos = new Float32Array(starCount * 3);
     const col = new Float32Array(starCount * 3);
@@ -356,7 +358,7 @@ export class RealStarMapEngine {
     this.scene.add(this.ecrinMarkerGroup);
   }
 
-  // Ecrin'in Yıldızına Teleskopla Otomatik Odaklan
+  // Ecrin'in Yıldızına Teleskopla Otomatik Odaklan & Yakınlaş
   focusOnEcrinStar() {
     if (!this.ecrinStarPos) return;
 
@@ -369,6 +371,8 @@ export class RealStarMapEngine {
 
     const startYaw = this.currentRotation.y;
     const startPitch = this.currentRotation.x;
+    const startFov = this.targetFov;
+    const endFov = 40; // Odaklanırken optik yakınlaşma sağla
 
     let progress = 0;
     const duration = 1500;
@@ -383,6 +387,7 @@ export class RealStarMapEngine {
       this.currentRotation.x = startPitch + (targetPitch - startPitch) * ease;
       this.targetRotation.y = this.currentRotation.y;
       this.targetRotation.x = this.currentRotation.x;
+      this.targetFov = startFov + (endFov - startFov) * ease;
 
       if (progress < 1) {
         requestAnimationFrame(anim);
@@ -401,6 +406,15 @@ export class RealStarMapEngine {
     requestAnimationFrame(anim);
   }
 
+  // Butonla Yakınlaşma / Uzaklaşma (Mobilde Tek Dokunuş Kontrolü)
+  zoomIn() {
+    this.targetFov = Math.max(25, this.targetFov - 12);
+  }
+
+  zoomOut() {
+    this.targetFov = Math.min(85, this.targetFov + 12);
+  }
+
   onResize() {
     if (!this.container || !this.renderer || !this.camera) return;
     const w = this.container.clientWidth || window.innerWidth;
@@ -415,22 +429,21 @@ export class RealStarMapEngine {
     const onMouseDown = (e) => {
       this.isDragging = true;
       this.previousMousePosition = {
-        x: e.clientX || (e.touches && e.touches[0].clientX) || 0,
-        y: e.clientY || (e.touches && e.touches[0].clientY) || 0
+        x: e.clientX,
+        y: e.clientY
       };
     };
 
     const onMouseMove = (e) => {
       if (!this.isDragging) return;
-      const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-      const clientY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+      const clientX = e.clientX;
+      const clientY = e.clientY;
 
       const deltaX = clientX - this.previousMousePosition.x;
       const deltaY = clientY - this.previousMousePosition.y;
 
       this.targetRotation.y += deltaX * 0.005;
       this.targetRotation.x += deltaY * 0.005;
-
       this.targetRotation.x = Math.max(-Math.PI / 2.1, Math.min(Math.PI / 2.1, this.targetRotation.x));
 
       this.previousMousePosition = { x: clientX, y: clientY };
@@ -443,19 +456,77 @@ export class RealStarMapEngine {
     const onWheel = (e) => {
       e.preventDefault();
       this.targetFov += e.deltaY * 0.05;
-      this.targetFov = Math.max(30, Math.min(85, this.targetFov));
+      this.targetFov = Math.max(25, Math.min(85, this.targetFov));
     };
 
     const dom = this.renderer.domElement;
     dom.addEventListener('mousedown', onMouseDown);
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseup', onMouseUp);
-
-    dom.addEventListener('touchstart', onMouseDown, { passive: true });
-    window.addEventListener('touchmove', onMouseMove, { passive: true });
-    window.addEventListener('touchend', onMouseUp);
-
     dom.addEventListener('wheel', onWheel, { passive: false });
+
+    // 📱 Mobil Dokunmatik Kontroller & İki Parmakla Yakınlaşma (Pinch-to-Zoom)
+    let pinchStartDist = 0;
+    let pinchStartFov = 65;
+
+    const getTouchDist = (t1, t2) => {
+      const dx = t1.clientX - t2.clientX;
+      const dy = t1.clientY - t2.clientY;
+      return Math.hypot(dx, dy);
+    };
+
+    const onTouchStart = (e) => {
+      if (e.touches.length === 1) {
+        this.isDragging = true;
+        this.previousMousePosition = {
+          x: e.touches[0].clientX,
+          y: e.touches[0].clientY
+        };
+      } else if (e.touches.length === 2) {
+        this.isDragging = false;
+        pinchStartDist = getTouchDist(e.touches[0], e.touches[1]);
+        pinchStartFov = this.targetFov;
+      }
+    };
+
+    const onTouchMove = (e) => {
+      if (e.touches.length === 1 && this.isDragging) {
+        const clientX = e.touches[0].clientX;
+        const clientY = e.touches[0].clientY;
+
+        const deltaX = clientX - this.previousMousePosition.x;
+        const deltaY = clientY - this.previousMousePosition.y;
+
+        this.targetRotation.y += deltaX * 0.006;
+        this.targetRotation.x += deltaY * 0.006;
+        this.targetRotation.x = Math.max(-Math.PI / 2.1, Math.min(Math.PI / 2.1, this.targetRotation.x));
+
+        this.previousMousePosition = { x: clientX, y: clientY };
+      } else if (e.touches.length === 2 && pinchStartDist > 0) {
+        const currentDist = getTouchDist(e.touches[0], e.touches[1]);
+        const factor = (pinchStartDist - currentDist) * 0.15;
+        this.targetFov = Math.max(25, Math.min(85, pinchStartFov + factor));
+      }
+    };
+
+    const onTouchEnd = (e) => {
+      if (e.touches.length === 0) {
+        this.isDragging = false;
+        pinchStartDist = 0;
+      } else if (e.touches.length === 1) {
+        this.isDragging = true;
+        this.previousMousePosition = {
+          x: e.touches[0].clientX,
+          y: e.touches[0].clientY
+        };
+        pinchStartDist = 0;
+      }
+    };
+
+    dom.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchend', onTouchEnd);
+    window.addEventListener('touchcancel', onTouchEnd);
 
     // Yeniden Boyutlandırma
     window.addEventListener('resize', () => {

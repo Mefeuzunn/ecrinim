@@ -1791,35 +1791,91 @@ body.portal-open {
     font-size: 1.2rem;
   }
 
-  /* 🔭 GÖKYÜZÜ HARİTASI (PLANETARIUM) */
-  .planetarium-viewport-box {
-    height: 52vh;
-    min-height: 340px;
-    border-radius: 18px;
+  /* 🔭 GÖKYÜZÜ HARİTASI (PLANETARIUM) MOBİL UYUM */
+  .starmap-intro h2 {
+    font-size: 1.45rem;
   }
 
-  .telescope-hud-overlay {
-    padding: 12px;
-  }
-
-  .hud-target-card {
-    padding: 14px 16px;
-    max-width: 100%;
-  }
-
-  .hud-target-card h3 {
-    font-size: 1.25rem;
-  }
-
-  .hud-specs {
-    font-size: 0.78rem;
-    gap: 4px;
+  .starmap-intro p {
+    font-size: 0.88rem;
     margin-bottom: 12px;
   }
 
+  .planetarium-viewport-box {
+    height: 62vh;
+    min-height: 430px;
+    border-radius: 20px;
+  }
+
+  .telescope-hud-overlay {
+    padding: 10px;
+  }
+
+  .hud-target-card {
+    padding: 12px 14px;
+    max-width: 100%;
+    border-radius: 16px;
+    background: rgba(10, 5, 24, 0.88);
+  }
+
+  .hud-collapse-toggle-btn {
+    display: inline-flex;
+  }
+
+  .hud-target-card h3 {
+    font-size: 1.15rem;
+    margin-bottom: 8px;
+  }
+
+  /* Mobilde özellikleri 2 sütunlu kompakt ızgaraya çevir */
+  .hud-specs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    font-size: 0.74rem;
+    line-height: 1.35;
+    margin-bottom: 10px;
+  }
+
+  /* Kart daraltıldığında özellikleri gizle, gökyüzüne maksimum alan aç */
+  .hud-target-card.collapsed .hud-specs {
+    display: none;
+  }
+
+  .hud-target-card.collapsed .toggle-arrow {
+    transform: rotate(-90deg);
+  }
+
+  .hud-focus-btn {
+    padding: 10px 14px;
+    font-size: 0.85rem;
+  }
+
+  .hud-floating-tools {
+    right: 12px;
+    bottom: 48px;
+    gap: 8px;
+  }
+
+  .hud-tool-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.4rem;
+  }
+
   .hud-controls-hint {
-    font-size: 0.78rem;
-    padding: 6px 14px;
+    font-size: 0.72rem;
+    padding: 5px 12px;
+    max-width: 92%;
+    text-align: center;
+  }
+
+  .hint-desktop {
+    display: none;
+  }
+
+  .hint-mobile {
+    display: inline;
   }
 
   /* 🎙️ SESLİ NOT KARTI */
@@ -2394,18 +2450,22 @@ body.portal-open {
 .planetarium-viewport-box {
   position: relative;
   width: 100%;
-  height: 560px;
+  height: 580px;
   background: radial-gradient(circle at center, #060312 0%, #020108 100%);
   border-radius: 24px;
   border: 1.5px solid rgba(125, 211, 252, 0.35);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(125, 211, 252, 0.2);
   overflow: hidden;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .planetarium-canvas {
   width: 100%;
   height: 100%;
   cursor: grab;
+  touch-action: none;
 }
 
 .planetarium-canvas:active {
@@ -2430,11 +2490,43 @@ body.portal-open {
   background: rgba(10, 5, 24, 0.85);
   border: 1px solid rgba(125, 211, 252, 0.45);
   backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   border-radius: 18px;
   padding: 20px 24px;
   box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6);
   pointer-events: auto;
   animation: fadeIn 0.5s ease;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hud-card-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.hud-collapse-toggle-btn {
+  display: none;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 3px 10px;
+  color: #fff;
+  font-size: 0.75rem;
+  cursor: pointer;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.hud-collapse-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+.toggle-arrow {
+  display: inline-block;
+  transition: transform 0.25s ease;
 }
 
 .hud-badge {
@@ -2449,7 +2541,6 @@ body.portal-open {
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 1px;
-  margin-bottom: 10px;
 }
 
 .hud-target-card h3 {
@@ -2466,6 +2557,7 @@ body.portal-open {
   font-size: 0.85rem;
   color: var(--text-muted);
   margin-bottom: 16px;
+  transition: all 0.3s ease;
 }
 
 .hud-specs strong {
@@ -2496,16 +2588,71 @@ body.portal-open {
   box-shadow: 0 10px 25px rgba(236, 72, 153, 0.5);
 }
 
+.hud-focus-btn:active {
+  transform: scale(0.97);
+}
+
+/* Mobilde Hızlı Zoom Butonları */
+.hud-floating-tools {
+  position: absolute;
+  right: 20px;
+  bottom: 75px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.hud-tool-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(10, 5, 24, 0.82);
+  border: 1px solid rgba(125, 211, 252, 0.5);
+  color: #fff;
+  font-size: 1.6rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.hud-tool-btn:hover {
+  background: rgba(14, 165, 233, 0.4);
+  border-color: #38bdf8;
+  transform: scale(1.1);
+}
+
+.hud-tool-btn:active {
+  transform: scale(0.92);
+}
+
 .hud-controls-hint {
   align-self: center;
   padding: 8px 20px;
   background: rgba(0, 0, 0, 0.65);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-radius: 30px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   font-size: 0.82rem;
   color: var(--text-muted);
   pointer-events: none;
+}
+
+.hint-desktop {
+  display: inline;
+}
+
+.hint-mobile {
+  display: none;
 }
 
 /* ===================================================================
