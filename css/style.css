@@ -1793,17 +1793,18 @@ body.portal-open {
 
   /* 🔭 GÖKYÜZÜ HARİTASI (PLANETARIUM) MOBİL UYUM */
   .starmap-intro h2 {
-    font-size: 1.45rem;
+    font-size: 1.35rem;
   }
 
   .starmap-intro p {
-    font-size: 0.88rem;
+    font-size: 0.84rem;
     margin-bottom: 12px;
   }
 
+  /* 3D Yıldız Alanı - Mobilde Tam ve Temiz Ekran */
   .planetarium-viewport-box {
-    height: 62vh;
-    min-height: 430px;
+    height: 64vh;
+    min-height: 420px;
     border-radius: 20px;
   }
 
@@ -1811,71 +1812,74 @@ body.portal-open {
     padding: 10px;
   }
 
-  .hud-target-card {
-    padding: 12px 14px;
-    max-width: 100%;
-    border-radius: 16px;
-    background: rgba(10, 5, 24, 0.88);
+  .hud-status-badge {
+    top: 10px;
+    left: 10px;
+    font-size: 0.72rem;
+    padding: 5px 11px;
   }
 
-  .hud-collapse-toggle-btn {
-    display: inline-flex;
-  }
-
-  .hud-target-card h3 {
-    font-size: 1.15rem;
-    margin-bottom: 8px;
-  }
-
-  /* Mobilde özellikleri 2 sütunlu kompakt ızgaraya çevir */
-  .hud-specs {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+  .hud-floating-focus-btn {
+    top: 10px;
+    right: 10px;
+    font-size: 0.76rem;
+    padding: 6px 12px;
     gap: 6px;
-    font-size: 0.74rem;
-    line-height: 1.35;
-    margin-bottom: 10px;
-  }
-
-  /* Kart daraltıldığında özellikleri gizle, gökyüzüne maksimum alan aç */
-  .hud-target-card.collapsed .hud-specs {
-    display: none;
-  }
-
-  .hud-target-card.collapsed .toggle-arrow {
-    transform: rotate(-90deg);
-  }
-
-  .hud-focus-btn {
-    padding: 10px 14px;
-    font-size: 0.85rem;
   }
 
   .hud-floating-tools {
     right: 12px;
-    bottom: 48px;
+    bottom: 12px;
     gap: 8px;
   }
 
   .hud-tool-btn {
-    width: 40px;
-    height: 40px;
-    font-size: 1.4rem;
+    width: 38px;
+    height: 38px;
+    font-size: 1.35rem;
   }
 
-  .hud-controls-hint {
-    font-size: 0.72rem;
-    padding: 5px 12px;
-    max-width: 92%;
-    text-align: center;
+  .starmap-hint-bar {
+    font-size: 0.74rem;
+    margin: 8px 0 14px;
+    padding: 0 4px;
   }
 
-  .hint-desktop {
-    display: none;
+  .starmap-details-card {
+    padding: 16px 14px;
+    border-radius: 16px;
+    margin-bottom: 20px;
   }
 
-  .hint-mobile {
-    display: inline;
+  .starmap-details-header {
+    margin-bottom: 14px;
+  }
+
+  .starmap-details-header h3 {
+    font-size: 1.15rem;
+  }
+
+  .starmap-details-header p {
+    font-size: 0.78rem;
+  }
+
+  .starmap-specs-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .starmap-spec-item {
+    padding: 9px 10px;
+    border-radius: 10px;
+  }
+
+  .starmap-spec-item .spec-label {
+    font-size: 0.65rem;
+  }
+
+  .starmap-spec-item .spec-val {
+    font-size: 0.76rem;
+    line-height: 1.3;
   }
 
   /* 🎙️ SESLİ NOT KARTI */
@@ -2479,124 +2483,71 @@ body.portal-open {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 24px;
+  z-index: 5;
+  padding: 20px;
 }
 
-.hud-target-card {
-  max-width: 380px;
-  background: rgba(10, 5, 24, 0.85);
-  border: 1px solid rgba(125, 211, 252, 0.45);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border-radius: 18px;
-  padding: 20px 24px;
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6);
-  pointer-events: auto;
-  animation: fadeIn 0.5s ease;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.hud-card-top-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-.hud-collapse-toggle-btn {
-  display: none;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  padding: 3px 10px;
-  color: #fff;
-  font-size: 0.75rem;
-  cursor: pointer;
-  align-items: center;
-  gap: 4px;
-  transition: all 0.2s ease;
-}
-
-.hud-collapse-toggle-btn:active {
-  transform: scale(0.95);
-}
-
-.toggle-arrow {
-  display: inline-block;
-  transition: transform 0.25s ease;
-}
-
-.hud-badge {
+/* Yüzen Sol Üst Rozet (Hedef Bilgisi) */
+.hud-status-badge {
+  position: absolute;
+  top: 18px;
+  left: 18px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 12px;
+  padding: 7px 16px;
   border-radius: 20px;
-  background: rgba(14, 165, 233, 0.15);
-  border: 1px solid rgba(14, 165, 233, 0.4);
+  background: rgba(10, 5, 24, 0.85);
+  border: 1px solid rgba(125, 211, 252, 0.45);
   color: #38bdf8;
-  font-size: 0.75rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
+  user-select: none;
 }
 
-.hud-target-card h3 {
-  font-family: var(--font-serif);
-  font-size: 1.45rem;
-  color: #fff;
-  margin-bottom: 12px;
-}
-
-.hud-specs {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  margin-bottom: 16px;
-  transition: all 0.3s ease;
-}
-
-.hud-specs strong {
-  color: var(--color-cyan);
-}
-
-.hud-focus-btn {
-  display: flex;
+/* Yüzen Sağ Üst Odaklan Butonu */
+.hud-floating-focus-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 8px;
-  width: 100%;
-  padding: 12px;
+  padding: 9px 18px;
   border-radius: 25px;
   background: linear-gradient(135deg, #0284c7 0%, #ec4899 100%);
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   color: #fff;
   font-family: var(--font-main);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
-  transition: all 0.3s ease;
+  pointer-events: auto;
+  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.45);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(10px);
+  user-select: none;
 }
 
-.hud-focus-btn:hover {
+.hud-floating-focus-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(236, 72, 153, 0.5);
+  box-shadow: 0 10px 25px rgba(236, 72, 153, 0.55);
 }
 
-.hud-focus-btn:active {
-  transform: scale(0.97);
+.hud-floating-focus-btn:active {
+  transform: scale(0.96);
 }
 
-/* Mobilde Hızlı Zoom Butonları */
+/* Yüzen Sağ Alt Zoom Butonları (+ / −) */
 .hud-floating-tools {
   position: absolute;
   right: 20px;
-  bottom: 75px;
+  bottom: 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -2608,8 +2559,8 @@ body.portal-open {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(10, 5, 24, 0.82);
-  border: 1px solid rgba(125, 211, 252, 0.5);
+  background: rgba(10, 5, 24, 0.85);
+  border: 1.5px solid rgba(125, 211, 252, 0.5);
   color: #fff;
   font-size: 1.6rem;
   line-height: 1;
@@ -2617,9 +2568,9 @@ body.portal-open {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   user-select: none;
 }
@@ -2634,25 +2585,88 @@ body.portal-open {
   transform: scale(0.92);
 }
 
-.hud-controls-hint {
-  align-self: center;
-  padding: 8px 20px;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  font-size: 0.82rem;
+/* Harita Altı İpucu Çubuğu */
+.starmap-hint-bar {
+  text-align: center;
+  margin: 12px 0 18px;
+  font-size: 0.85rem;
   color: var(--text-muted);
-  pointer-events: none;
+  opacity: 0.9;
 }
 
-.hint-desktop {
-  display: inline;
+/* Harita Altında Tescil Detay Kartı */
+.starmap-details-card {
+  background: rgba(12, 6, 28, 0.8);
+  border: 1px solid rgba(125, 211, 252, 0.35);
+  border-radius: 20px;
+  padding: 24px 28px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+  margin-bottom: 24px;
 }
 
-.hint-mobile {
-  display: none;
+.starmap-details-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.starmap-crest {
+  display: block;
+  font-size: 1.1rem;
+  color: #38bdf8;
+  letter-spacing: 4px;
+  margin-bottom: 6px;
+}
+
+.starmap-details-header h3 {
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.starmap-details-header p {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.starmap-specs-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.starmap-spec-item {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(125, 211, 252, 0.22);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: all 0.25s ease;
+}
+
+.starmap-spec-item:hover {
+  background: rgba(125, 211, 252, 0.08);
+  border-color: rgba(125, 211, 252, 0.45);
+  transform: translateY(-2px);
+}
+
+.starmap-spec-item .spec-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #38bdf8;
+  letter-spacing: 1px;
+}
+
+.starmap-spec-item .spec-val {
+  font-size: 0.88rem;
+  color: #fff;
+  font-weight: 500;
+  word-break: break-word;
 }
 
 /* ===================================================================

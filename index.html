@@ -45,7 +45,7 @@
   <meta name="apple-mobile-web-app-title" content="Ecrinim">
 
   <!-- Özel Stiller -->
-  <link rel="stylesheet" href="css/style.css?v=3.2">
+  <link rel="stylesheet" href="css/style.css?v=3.3">
 </head>
 <body>
 
@@ -454,45 +454,57 @@
           <div class="starmap-section">
             <div class="starmap-intro">
               <h2>Trilyonlarca Yıldız Arasında Ecrin'in Yıldızı 🔭</h2>
-              <p>Gerçek gök koordinatlarında (RA 18h 36m 56s | Dec +38° 47′ 01″), Lir Takımyıldızında sadece senin adınla parlayan göksel tescilli yerin.</p>
+              <p>Gerçek gök koordinatlarında (RA 18h 36m 56s | Dec +38° 47′ 01″), Lir Takımyıldızında sadece senin adınla parlayan tescilli yerin.</p>
             </div>
 
+            <!-- 100% TEMİZ & ENGELSİZ 3D TELESKOP ALANI -->
             <div class="planetarium-viewport-box">
               <div id="planetarium-canvas-container" class="planetarium-canvas"></div>
               
-              <!-- Teleskop HUD Bilgi ve Kontrol Katmanı -->
+              <!-- Sade Yüzen Arayüz (Haritayı Kapatmaz) -->
               <div class="telescope-hud-overlay">
-                <!-- Hedef Kartı (Mobilde Açılır / Kapanır) -->
-                <div class="hud-target-card" id="hud-target-card">
-                  <div class="hud-card-top-bar">
-                    <div class="hud-badge">🎯 HEDEF: KİLİTLENDİ</div>
-                    <button type="button" class="hud-collapse-toggle-btn" id="hud-collapse-btn" title="Detayları Gizle / Göster">
-                      <span class="toggle-text">Detaylar</span>
-                      <span class="toggle-arrow" id="hud-toggle-arrow">▾</span>
-                    </button>
-                  </div>
-                  <h3>✦ Ecrin'in Yıldızı ✦</h3>
-                  <div class="hud-specs" id="hud-specs-box">
-                    <span><strong>Gök Koordinatı:</strong> RA 18h 36m 56s | Dec +38° 47′ 01″</span>
-                    <span><strong>Takımyıldızı:</strong> Lir (Lyra - Sonsuz Aşkın Çalgısı)</span>
-                    <span><strong>Mesafe:</strong> 25.04 Işık Yılı (Vega Civarı)</span>
-                    <span><strong>Parlaklık:</strong> Gözlerinin Işıltısı Kadar Saf</span>
-                  </div>
-                  <button id="focus-ecrin-star-btn" class="hud-focus-btn">
-                    <span>🎯 Yıldızıma Odaklan & Yakınlaş</span>
-                  </button>
-                </div>
+                <!-- Sol Üst: Hedef Rozeti -->
+                <div class="hud-status-badge">🎯 Ecrin'in Yıldızı (Lyra)</div>
 
-                <!-- Mobilde Hızlı Zoom Kontrolleri (+ / −) -->
+                <!-- Sağ Üst: Odaklanma Butonu -->
+                <button type="button" id="focus-ecrin-star-btn" class="hud-floating-focus-btn">
+                  <span>🎯 Yıldızıma Odaklan</span>
+                </button>
+
+                <!-- Sağ Alt: Zoom Kontrolleri (+ / −) -->
                 <div class="hud-floating-tools">
                   <button type="button" class="hud-tool-btn" id="starmap-zoom-in-btn" title="Yakınlaş (Zoom In)" aria-label="Yakınlaş">+</button>
                   <button type="button" class="hud-tool-btn" id="starmap-zoom-out-btn" title="Uzaklaş (Zoom Out)" aria-label="Uzaklaş">−</button>
                 </div>
+              </div>
+            </div>
 
-                <!-- Kullanım İpuçları (Cihaza Göre Dinamik) -->
-                <div class="hud-controls-hint">
-                  <span class="hint-desktop">🖱️ Gökyüzünde 360° gezinmek için sürükle, tekerlekle yakınlaş</span>
-                  <span class="hint-mobile">👆 360° keşfetmek için sürükle, iki parmakla veya (+ / −) ile yakınlaş</span>
+            <!-- Harita Altı İpucu -->
+            <p class="starmap-hint-bar">👆 360° gökyüzünde gezinmek için parmağınla sürükle, iki parmakla veya (+ / −) ile yakınlaş</p>
+
+            <!-- HARİTA ALTINDA AYRINTILI TELESKOP & KOORDİNAT KARTI -->
+            <div class="starmap-details-card">
+              <div class="starmap-details-header">
+                <span class="starmap-crest">✦ 🪐 ✦</span>
+                <h3>Teleskop Tescil Detayları</h3>
+                <p>Bu gök cismi sonsuza dek Ecrin'in adıyla parlamak üzere tescil edilmiştir</p>
+              </div>
+              <div class="starmap-specs-grid">
+                <div class="starmap-spec-item">
+                  <span class="spec-label">GÖK KOORDİNATI</span>
+                  <span class="spec-val">RA 18h 36m 56s | Dec +38° 47′ 01″</span>
+                </div>
+                <div class="starmap-spec-item">
+                  <span class="spec-label">TAKIMYILDIZI</span>
+                  <span class="spec-val">Lir (Lyra - Sonsuz Aşkın Çalgısı)</span>
+                </div>
+                <div class="starmap-spec-item">
+                  <span class="spec-label">UZAKLIK</span>
+                  <span class="spec-val">25.04 Işık Yılı (Vega Civarı)</span>
+                </div>
+                <div class="starmap-spec-item">
+                  <span class="spec-label">PARLAKLIK</span>
+                  <span class="spec-val">Gözlerinin Işıltısı Kadar Saf</span>
                 </div>
               </div>
             </div>
@@ -599,6 +611,6 @@
   </div>
 
   <!-- Ana Uygulama Modülü -->
-  <script type="module" src="js/app.js?v=3.6"></script>
+  <script type="module" src="js/app.js?v=3.7"></script>
 </body>
 </html>

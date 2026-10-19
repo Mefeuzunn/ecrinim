@@ -617,6 +617,7 @@ class UniverseApp {
       const focusBtn = document.getElementById('focus-ecrin-star-btn');
       if (focusBtn && this.starMapEngine) {
         focusBtn.addEventListener('click', () => {
+          this.triggerHaptic(20);
           this.starMapEngine.focusOnEcrinStar();
         });
       }
@@ -636,17 +637,6 @@ class UniverseApp {
           e.stopPropagation();
           this.triggerHaptic(10);
           this.starMapEngine.zoomOut();
-        });
-      }
-
-      // 📱 Mobilde Hedef Kartını Açıp/Kapatma (Expand / Collapse)
-      const collapseBtn = document.getElementById('hud-collapse-btn');
-      const hudCard = document.getElementById('hud-target-card');
-      if (collapseBtn && hudCard) {
-        collapseBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          this.triggerHaptic(12);
-          hudCard.classList.toggle('collapsed');
         });
       }
     } else {
