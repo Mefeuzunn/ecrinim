@@ -98,37 +98,82 @@ export const CONFIG = {
     }
   ],
 
-  // Fotoğraf Galerisi (Polaroid Tarzı)
+  // Fotoğraf Galerisi (Polaroid Tarzı - Gerçek Hatıralarımız)
   gallery: [
     {
-      title: "En Güzel Gülüşün",
-      subtitle: "Güneşten daha parlak",
-      image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1000&auto=format&fit=crop"
+      title: "En Güzel Gülüşün 🌸",
+      subtitle: "Güneşten daha parlak, dünyamı aydınlatan tebessüm",
+      image: "assets/photos/IMG_4581.jpg"
     },
     {
-      title: "Gözlerinin İçi",
-      subtitle: "Kaybolmayı en sevdiğim yer",
-      image: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=1000&auto=format&fit=crop"
+      title: "Gözlerinin İçi ✨",
+      subtitle: "Kaybolmayı en çok sevdiğim o derin bakışlar",
+      image: "assets/photos/IMG_4592.jpg"
     },
     {
-      title: "El Ele Anlar",
-      subtitle: "Güvenin ve aşkın resmi",
-      image: "https://images.unsplash.com/photo-1474552226712-ac0f0961a954?q=80&w=1000&auto=format&fit=crop"
+      title: "Birlikte Her An 💖",
+      subtitle: "Zamanın durduğu, sadece ikimizin olduğu an",
+      image: "assets/photos/IMG_4604.jpg"
     },
     {
-      title: "Küçük Kaçamağımız",
-      subtitle: "Dünyadan uzak, sadece ikimiz",
-      image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=1000&auto=format&fit=crop"
+      title: "Huzurumun Resmi ☕",
+      subtitle: "Senin yanındayken dünya öyle güzel ki...",
+      image: "assets/photos/IMG_4614.jpg"
     },
     {
-      title: "Sessiz Huzur",
-      subtitle: "Omuzumdaki başın",
-      image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?q=80&w=1000&auto=format&fit=crop"
+      title: "Kalbimin Ritmi 💓",
+      subtitle: "Sadece senin adınla atan kalbimin yankısı",
+      image: "assets/photos/IMG_4615.jpg"
     },
     {
-      title: "Sonsuz Sevgimle",
-      subtitle: "Daima ve her zaman",
-      image: "https://images.unsplash.com/photo-1501901609772-df0848060b33?q=80&w=1000&auto=format&fit=crop"
+      title: "Sıcak Bir Yaz Günü ☀️",
+      subtitle: "İçimi ısıtan varlığın ve huzur dolu sesin",
+      image: "assets/photos/IMG_5309.jpg"
+    },
+    {
+      title: "Küçük Kaçamağımız 🌿",
+      subtitle: "Dünyadan uzak, el ele en tatlı yolculuk",
+      image: "assets/photos/IMG_5327.jpg"
+    },
+    {
+      title: "El Ele Anlar 🤝",
+      subtitle: "Güvenin, sadakatin ve aşkın en saf hali",
+      image: "assets/photos/IMG_5334.jpg"
+    },
+    {
+      title: "Sessiz ve Derin 🌙",
+      subtitle: "Kelimelere gerek kalmadan anlaşabildiğimiz an",
+      image: "assets/photos/IMG_5339.jpg"
+    },
+    {
+      title: "İçten Bir Tebessüm 😊",
+      subtitle: "Yüzümdeki her gülüşün tek sebebi sensin",
+      image: "assets/photos/IMG_5340.jpg"
+    },
+    {
+      title: "Tatlı Sohbetlerimiz 💬",
+      subtitle: "Konuşurken saatlerin su gibi akıp geçtiği anlar",
+      image: "assets/photos/IMG_5341.jpg"
+    },
+    {
+      title: "Büyülü Bir Akşam 🌆",
+      subtitle: "Yıldızların altında birbirimize sığındığımız o gün",
+      image: "assets/photos/IMG_5348.jpg"
+    },
+    {
+      title: "Sonsuz Sevgimle ♾️",
+      subtitle: "Daima ve her zaman, her koşulda seninle",
+      image: "assets/photos/IMG_5361.jpg"
+    },
+    {
+      title: "Mevsimler Değişirken 🍂",
+      subtitle: "Zaman aksa da sana olan aşkım hep ilk günkü gibi",
+      image: "assets/photos/IMG_5879.jpg"
+    },
+    {
+      title: "İyi ki Sen ❤️",
+      subtitle: "Evrenimin en kıymetli yıldızı, canım sevgilim",
+      image: "assets/photos/IMG_5886.jpg"
     }
   ],
 
