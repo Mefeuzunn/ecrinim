@@ -2160,24 +2160,6 @@ body.portal-open {
   margin-bottom: 24px;
 }
 
-.peek-capsule-btn {
-  padding: 12px 28px;
-  border-radius: 30px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #fff;
-  font-family: var(--font-main);
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.peek-capsule-btn:hover {
-  background: rgba(252, 231, 161, 0.2);
-  border-color: var(--color-gold);
-  transform: translateY(-2px);
-}
-
 .capsule-letter-box {
   margin-top: 24px;
   background: #fdfaf5;

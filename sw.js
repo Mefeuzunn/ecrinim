@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ecrin-universe-v5';
+const CACHE_NAME = 'ecrin-universe-v6';
 
 // Yeni service worker yüklendiğinde hemen aktifleş
 self.addEventListener('install', (e) => {

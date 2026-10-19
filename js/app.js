@@ -153,6 +153,12 @@ class UniverseApp {
         if (capsuleTimeLeft) {
           capsuleTimeLeft.textContent = '🎉 1. Yılımız Kutlu Olsun! Kilit Açıldı!';
         }
+        const letterBox = document.getElementById('capsule-letter-box');
+        const lockIcon = document.getElementById('capsule-lock-icon');
+        if (letterBox && letterBox.style.display !== 'block') {
+          letterBox.style.display = 'block';
+        }
+        if (lockIcon) lockIcon.textContent = '🔓';
       }
     };
 
@@ -305,7 +311,6 @@ class UniverseApp {
     const teaserEl = document.getElementById('capsule-teaser');
     const letterBox = document.getElementById('capsule-letter-box');
     const letterContent = document.getElementById('capsule-letter-content');
-    const peekBtn = document.getElementById('peek-capsule-btn');
     const lockIcon = document.getElementById('capsule-lock-icon');
 
     if (titleEl) titleEl.textContent = CONFIG.timeCapsule.title;
@@ -318,21 +323,9 @@ class UniverseApp {
     if (isUnlocked) {
       if (lockIcon) lockIcon.textContent = '🔓';
       if (letterBox) letterBox.style.display = 'block';
-      if (peekBtn) peekBtn.style.display = 'none';
     } else {
-      if (peekBtn) {
-        peekBtn.addEventListener('click', () => {
-          if (letterBox.style.display === 'none') {
-            letterBox.style.display = 'block';
-            peekBtn.textContent = 'Gizli Mektubu Gizle 🙈';
-            cosmicAudio.playChime();
-            this.triggerCosmicConfetti();
-          } else {
-            letterBox.style.display = 'none';
-            peekBtn.textContent = 'Merak Ettim, Gizlice Bak 🤫';
-          }
-        });
-      }
+      if (lockIcon) lockIcon.textContent = '🔒';
+      if (letterBox) letterBox.style.display = 'none';
     }
   }
 
