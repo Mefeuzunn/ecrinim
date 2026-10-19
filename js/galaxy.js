@@ -506,37 +506,8 @@ export class GalaxyEngine {
       this.renderer.setSize(w, h);
     });
 
-    // Mobil Jiroskop (Gyroscope Parallax) Desteği
-    const handleOrientation = (e) => {
-      if (e.beta === null || e.gamma === null) return;
-      const tiltX = (e.beta - 45) * 0.005;
-      const tiltY = e.gamma * 0.005;
-      this.gyroOffset.x = Math.max(-0.25, Math.min(0.25, tiltX));
-      this.gyroOffset.y = Math.max(-0.25, Math.min(0.25, tiltY));
-    };
-
-    if (typeof window !== 'undefined' && window.DeviceOrientationEvent) {
-      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-        let requested = false;
-        const requestGyro = () => {
-          if (requested) return;
-          requested = true;
-          DeviceOrientationEvent.requestPermission()
-            .then((perm) => {
-              if (perm === 'granted') {
-                window.addEventListener('deviceorientation', handleOrientation, { passive: true });
-              }
-            })
-            .catch(() => {});
-          window.removeEventListener('click', requestGyro);
-          window.removeEventListener('touchend', requestGyro);
-        };
-        window.addEventListener('click', requestGyro, { once: true });
-        window.addEventListener('touchend', requestGyro, { once: true });
-      } else {
-        window.addEventListener('deviceorientation', handleOrientation, { passive: true });
-      }
-    }
+    // 🔒 Mobil Jiroskop Salınımı Kapatıldı (Kullanıcı talebi: Sağa sola kaymasın, sabit dursun)
+    this.gyroOffset = { x: 0, y: 0 };
   }
 
   checkHover() {

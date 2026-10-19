@@ -728,8 +728,8 @@ class UniverseApp {
       });
     });
 
-    // Sekmeler arası parmakla sola/sağa kaydırma (Swipe Gestures)
-    this.setupSwipeTabs(tabButtons, activateTab);
+    // 🔒 Sekmeler arası parmakla sola/sağa kaydırma (Swipe Gestures) kapatıldı (Kullanıcı talebi: Sayfa kaydırırken sekmeler sağa sola kaymasın, sabit dursun)
+    // this.setupSwipeTabs(tabButtons, activateTab);
 
     // Sekmeler çubuğunu fare ile tutup sürükleyerek kaydırma (Drag to Scroll)
     this.setupTabsDragScroll();
