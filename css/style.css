@@ -85,9 +85,11 @@ body.portal-open {
 }
 
 .sparkle-icon {
-  color: var(--color-gold);
-  font-size: 1.1rem;
-  animation: spinSlow 12s linear infinite;
+  font-size: 1.15rem;
+  display: inline-block;
+  line-height: 1;
+  animation: heartBeat 1.8s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(255, 75, 120, 0.6));
 }
 
 .brand-title {
