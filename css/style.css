@@ -622,31 +622,69 @@ body.portal-open {
 }
 
 .cert-gold-border {
-  border: 1px solid rgba(251, 191, 36, 0.35);
+  border: 1.5px solid rgba(251, 191, 36, 0.45);
   border-radius: 20px;
   padding: 38px 36px 30px;
   text-align: center;
   position: relative;
-  background: rgba(12, 5, 24, 0.45);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(12, 5, 24, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: inset 0 0 45px rgba(251, 191, 36, 0.05);
 }
 
-/* Üst Rozet & Başlık */
+/* Köşe Süsleri (Ornaments) */
+.cert-corner-ornament {
+  position: absolute;
+  font-size: 1.25rem;
+  color: rgba(251, 191, 36, 0.65);
+  pointer-events: none;
+  line-height: 1;
+  z-index: 2;
+  user-select: none;
+}
+.cert-corner-ornament.top-left { top: 12px; left: 14px; }
+.cert-corner-ornament.top-right { top: 12px; right: 14px; }
+.cert-corner-ornament.bottom-left { bottom: 12px; left: 14px; }
+.cert-corner-ornament.bottom-right { bottom: 12px; right: 14px; }
+
+/* 1. Üst Kurumsal Başlık & Sicil Amblemi */
+.cert-top-crest {
+  font-size: 1.5rem;
+  color: #fbbf24;
+  margin-bottom: 4px;
+}
+
+.cert-org-title {
+  font-family: var(--font-royal);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fde68a;
+  letter-spacing: 3.5px;
+  margin-bottom: 3px;
+}
+
+.cert-org-subtitle {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  letter-spacing: 1.2px;
+  margin-bottom: 14px;
+}
+
 .cert-badge-pill {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 18px;
+  padding: 5px 16px;
   border-radius: 30px;
   background: rgba(251, 191, 36, 0.12);
   border: 1px solid rgba(251, 191, 36, 0.35);
   color: #fbbf24;
   font-family: var(--font-royal);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 2px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .pill-sparkle {
@@ -656,39 +694,65 @@ body.portal-open {
 
 .cert-header h2 {
   font-family: var(--font-royal);
-  font-size: 2.1rem;
+  font-size: 2.15rem;
   letter-spacing: 2.5px;
   background: linear-gradient(135deg, #fff 0%, #fef3c7 40%, #fbbf24 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+}
+
+.cert-doc-number {
+  font-size: 0.84rem;
+  color: #fbbf24;
+  letter-spacing: 1.5px;
+  margin-bottom: 14px;
+}
+
+.cert-doc-number strong {
+  color: #fef08a;
 }
 
 .cert-sub {
   font-family: var(--font-serif);
   font-style: italic;
   color: #cbd5e1;
-  font-size: 0.96rem;
-  max-width: 620px;
-  margin: 0 auto 30px;
+  font-size: 0.95rem;
+  max-width: 640px;
+  margin: 0 auto 28px;
   line-height: 1.55;
-  opacity: 0.9;
+  opacity: 0.92;
 }
 
-/* Yıldız Sahibi Hero */
+/* 2. Yıldız Sahibi Hero */
 .cert-star-highlight {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 24px 20px 20px;
-  margin: 0 auto 34px;
-  max-width: 540px;
-  background: radial-gradient(circle at center, rgba(236, 72, 153, 0.15) 0%, rgba(14, 165, 233, 0.08) 50%, transparent 80%);
+  padding: 22px 20px 18px;
+  margin: 0 auto 30px;
+  max-width: 560px;
+  background: radial-gradient(circle at center, rgba(236, 72, 153, 0.14) 0%, rgba(14, 165, 233, 0.08) 50%, transparent 80%);
   border-radius: 24px;
-  border: 1px solid rgba(251, 191, 36, 0.25);
+  border: 1.5px solid rgba(251, 191, 36, 0.35);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 0 25px rgba(251, 191, 36, 0.06);
+}
+
+.cert-star-label-small {
+  font-size: 0.72rem;
+  letter-spacing: 2px;
+  color: #fde68a;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.cert-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
 }
 
 .cert-star-highlight h3 {
@@ -707,29 +771,29 @@ body.portal-open {
 }
 
 .cert-star-tag {
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   letter-spacing: 1.5px;
   color: #fde68a;
   text-transform: uppercase;
   font-weight: 600;
-  opacity: 0.9;
+  opacity: 0.92;
 }
 
-/* Özellikler Grid (2x2) */
+/* 3. Özellikler Grid (2x3 Tablo Görünümü) */
 .cert-meta-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  max-width: 720px;
-  margin: 0 auto 34px;
+  gap: 14px;
+  max-width: 740px;
+  margin: 0 auto 30px;
   text-align: left;
 }
 
 .cert-meta-item {
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(251, 191, 36, 0.2);
+  border: 1px solid rgba(251, 191, 36, 0.22);
   border-radius: 16px;
-  padding: 14px 18px;
+  padding: 13px 18px;
   display: flex;
   align-items: center;
   gap: 14px;
@@ -745,7 +809,7 @@ body.portal-open {
 }
 
 .meta-icon {
-  font-size: 1.6rem;
+  font-size: 1.55rem;
   flex-shrink: 0;
 }
 
@@ -757,7 +821,7 @@ body.portal-open {
 }
 
 .meta-label {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
   color: #fbbf24;
   letter-spacing: 1px;
@@ -765,14 +829,14 @@ body.portal-open {
 
 .meta-val {
   font-family: var(--font-main);
-  font-size: 0.96rem;
+  font-size: 0.94rem;
   font-weight: 600;
   color: #fff;
   line-height: 1.35;
   word-break: break-word;
 }
 
-/* İmzalar ve Mühür (Footer) */
+/* 4. İmzalar ve Mühür (Footer) */
 .cert-footer {
   display: flex;
   justify-content: space-between;
@@ -787,7 +851,7 @@ body.portal-open {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 170px;
+  width: 180px;
 }
 
 .sign-name {
@@ -822,12 +886,12 @@ body.portal-open {
   justify-content: center;
   color: #3e1f05;
   font-family: var(--font-royal);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 800;
   text-align: center;
   line-height: 1.25;
   box-shadow: 0 0 30px rgba(234, 179, 8, 0.55), inset 0 2px 4px rgba(255, 255, 255, 0.6);
-  border: 2px solid rgba(255, 255, 255, 0.5);
+  border: 2.5px solid rgba(255, 255, 255, 0.65);
   animation: pulseDot 3s ease-in-out infinite;
   user-select: none;
 }
@@ -835,6 +899,35 @@ body.portal-open {
 .seal-inner-text {
   display: block;
   letter-spacing: 1px;
+}
+
+/* 5. Güvenlik Şeridi */
+.cert-security-strip {
+  margin-top: 22px;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(251, 191, 36, 0.22);
+  font-size: 0.72rem;
+  color: #94a3b8;
+  letter-spacing: 1.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.strip-sep {
+  color: #fbbf24;
+}
+
+/* İndirme İpucu */
+.cert-download-hint {
+  text-align: center;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  margin-top: 12px;
+  max-width: 580px;
+  line-height: 1.45;
 }
 
 /* ===================================================================
@@ -1797,81 +1890,118 @@ body.portal-open {
 
   .certificate-frame {
     border-radius: 22px;
-    padding: 10px;
+    padding: 8px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
     border-width: 1px;
   }
 
+  .cert-corner-ornament {
+    font-size: 0.95rem;
+  }
+  .cert-corner-ornament.top-left { top: 8px; left: 10px; }
+  .cert-corner-ornament.top-right { top: 8px; right: 10px; }
+  .cert-corner-ornament.bottom-left { bottom: 8px; left: 10px; }
+  .cert-corner-ornament.bottom-right { bottom: 8px; right: 10px; }
+
   .cert-gold-border {
     border-radius: 16px;
-    padding: 20px 12px 18px;
+    padding: 18px 10px 16px;
     border-width: 1px;
   }
 
+  .cert-top-crest {
+    font-size: 1.25rem;
+    margin-bottom: 2px;
+  }
+
+  .cert-org-title {
+    font-size: 0.72rem;
+    letter-spacing: 1.8px;
+    line-height: 1.3;
+  }
+
+  .cert-org-subtitle {
+    font-size: 0.62rem;
+    letter-spacing: 0.6px;
+    margin-bottom: 8px;
+  }
+
   .cert-badge-pill {
-    font-size: 0.66rem;
-    padding: 4px 12px;
-    letter-spacing: 1.2px;
-    margin-bottom: 10px;
+    font-size: 0.64rem;
+    padding: 3px 10px;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
   }
 
   .cert-header h2 {
-    font-size: 1.32rem;
-    letter-spacing: 1.5px;
-    margin-bottom: 6px;
+    font-size: 1.28rem;
+    letter-spacing: 1.2px;
+    margin-bottom: 4px;
+  }
+
+  .cert-doc-number {
+    font-size: 0.68rem;
+    letter-spacing: 0.8px;
+    margin-bottom: 10px;
   }
 
   .cert-sub {
-    font-size: 0.8rem;
-    margin-bottom: 18px;
-    line-height: 1.45;
+    font-size: 0.78rem;
+    margin-bottom: 16px;
+    line-height: 1.4;
     padding: 0 4px;
   }
 
   .cert-star-highlight {
-    padding: 16px 10px 14px;
-    margin-bottom: 20px;
-    border-radius: 18px;
+    padding: 14px 8px 12px;
+    margin-bottom: 18px;
+    border-radius: 16px;
+  }
+
+  .cert-star-label-small {
+    font-size: 0.62rem;
+    letter-spacing: 1.2px;
   }
 
   .cert-star-highlight h3 {
-    font-size: 2.3rem;
-    margin: 2px 0 6px;
+    font-size: 2.15rem;
+    margin: 2px 0 4px;
   }
 
   .cert-star-glow {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
   }
 
   .cert-star-tag {
-    font-size: 0.68rem;
-    letter-spacing: 0.8px;
+    font-size: 0.65rem;
+    letter-spacing: 0.6px;
+    line-height: 1.3;
   }
 
-  /* Mobilde 2x2 Kompakt Izgara */
+  /* Mobilde 2x3 Kompakt Izgara */
   .cert-meta-grid {
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 20px;
+    gap: 7px;
+    margin-bottom: 18px;
   }
 
   .cert-meta-item {
-    padding: 10px 9px;
-    border-radius: 12px;
-    gap: 8px;
+    padding: 9px 8px;
+    border-radius: 11px;
+    gap: 7px;
   }
 
   .meta-icon {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
   }
 
   .meta-label {
-    font-size: 0.62rem;
+    font-size: 0.58rem;
     letter-spacing: 0.5px;
   }
 
   .meta-val {
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     line-height: 1.25;
   }
 
@@ -1882,7 +2012,7 @@ body.portal-open {
     justify-content: space-between;
     align-items: center;
     gap: 6px;
-    padding-top: 16px;
+    padding-top: 14px;
     margin-top: 6px;
   }
 
@@ -1893,7 +2023,7 @@ body.portal-open {
   }
 
   .sign-name {
-    font-size: 1.35rem;
+    font-size: 1.3rem;
   }
 
   .sign-line {
@@ -1901,17 +2031,26 @@ body.portal-open {
   }
 
   .sign-title {
-    font-size: 0.62rem;
-    letter-spacing: 0.5px;
+    font-size: 0.58rem;
+    letter-spacing: 0.3px;
+    line-height: 1.2;
   }
 
   .gold-wax-seal {
-    width: 62px;
-    height: 62px;
-    font-size: 0.62rem;
+    width: 60px;
+    height: 60px;
+    font-size: 0.58rem;
     line-height: 1.15;
     margin: 0 4px;
     flex-shrink: 0;
+  }
+
+  .cert-security-strip {
+    font-size: 0.58rem;
+    letter-spacing: 0.6px;
+    gap: 4px;
+    padding-top: 10px;
+    margin-top: 14px;
   }
 
   .cert-download-bar {
@@ -1922,7 +2061,13 @@ body.portal-open {
     width: 100%;
     justify-content: center;
     padding: 13px 16px;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
+  }
+
+  .cert-download-hint {
+    font-size: 0.72rem;
+    margin-top: 8px;
+    padding: 0 8px;
   }
 
   /* ⏳ ANILARIMIZ (TIMELINE) */

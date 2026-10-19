@@ -927,127 +927,324 @@ class UniverseApp {
     }
   }
 
-  // 📜 RESMİ YILDIZ SERTİFİKASINI YÜKSEK ÇÖZÜNÜRLÜKLÜ PNG OLARAK İNDİRME
+  // 📜 RESMİ YILDIZ SERTİFİKASINI YÜKSEK ÇÖZÜNÜRLÜKLÜ PNG OLARAK İNDİRME / PAYLAŞMA
   setupCertificateDownload() {
     const btn = document.getElementById('download-cert-btn');
     if (!btn) return;
 
     btn.addEventListener('click', async () => {
+      this.triggerHaptic(25);
       this.triggerCosmicConfetti();
       cosmicAudio.playChime();
 
-      if (document.fonts && document.fonts.ready) {
-        await document.fonts.ready;
+      const originalHtml = btn.innerHTML;
+      btn.innerHTML = `<span class="btn-icon">⏳</span><span class="btn-text">Sertifika Hazırlanıyor...</span>`;
+      btn.disabled = true;
+
+      try {
+        // Fontların hazır olmasını bekle (en fazla 300ms, tarayıcı jestini kaçırmamak için)
+        if (document.fonts && document.fonts.ready) {
+          await Promise.race([
+            document.fonts.ready,
+            new Promise(res => setTimeout(res, 300))
+          ]);
+        }
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        this.renderProfessionalCertificateCanvas(canvas, ctx);
+
+        // Canvas -> PNG Blob
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 0.98));
+        if (!blob) throw new Error('Sertifika görseli üretilemedi');
+
+        const fileName = `Ecrin-Resmi-Yildiz-Sertifikasi.png`;
+        const file = new File([blob], fileName, { type: 'image/png' });
+
+        let shared = false;
+        // 1. Mobil Cihazlar (iOS Safari & Android Chrome): Web Share API
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({
+              title: "Ecrin'in Resmi Yıldız Tescil Sertifikası ✨",
+              text: "Trilyonlarca yıldız arasında sadece senin adınla tescil edilen resmi yıldız sertifikan...",
+              files: [file]
+            });
+            shared = true;
+          } catch (shareErr) {
+            if (shareErr.name !== 'AbortError') {
+              console.warn('Share API hatası:', shareErr);
+            }
+          }
+        }
+
+        const blobUrl = URL.createObjectURL(blob);
+
+        // 2. Masaüstü ve Paylaşım desteklemeyen tarayıcılar için doğrudan indirme
+        if (!shared) {
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = blobUrl;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(() => {
+            document.body.removeChild(a);
+          }, 1500);
+
+          // 3. Ekranda yüksek çözünürlüklü Lightbox Önizlemesi aç (Uzun basarak 'Fotoğraflara Kaydet' seçeneği)
+          this.showCertificateLightbox(blobUrl);
+        }
+      } catch (err) {
+        console.error('Sertifika oluşturma/indirme hatası:', err);
+        alert('Sertifikanız hazırlanırken bir sorun oluştu. Lütfen sayfayı yenileyip tekrar deneyin.');
+      } finally {
+        btn.innerHTML = originalHtml;
+        btn.disabled = false;
       }
-
-      const canvas = document.createElement('canvas');
-      canvas.width = 1200;
-      canvas.height = 850;
-      const ctx = canvas.getContext('2d');
-
-      // 1. Gece Mavisi Radyal Arka Plan
-      const bgGrad = ctx.createRadialGradient(600, 425, 60, 600, 425, 750);
-      bgGrad.addColorStop(0, '#1c0f33');
-      bgGrad.addColorStop(1, '#070210');
-      ctx.fillStyle = bgGrad;
-      ctx.fillRect(0, 0, 1200, 850);
-
-      // Yıldız tozları
-      for (let i = 0; i < 240; i++) {
-        ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.7 + 0.3})`;
-        ctx.fillRect(Math.random() * 1200, Math.random() * 850, Math.random() * 2 + 1, Math.random() * 2 + 1);
-      }
-
-      // 2. Altın Çerçeveler
-      ctx.strokeStyle = '#d4af37';
-      ctx.lineWidth = 6;
-      ctx.strokeRect(35, 35, 1130, 780);
-
-      ctx.strokeStyle = 'rgba(252, 231, 161, 0.45)';
-      ctx.lineWidth = 1.5;
-      ctx.strokeRect(46, 46, 1108, 758);
-
-      // 3. Başlık
-      ctx.fillStyle = '#fce7a1';
-      ctx.font = 'bold 36px "Cinzel", Georgia, serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('EVRENSEL YILDIZ TESCİL SERTİFİKASI', 600, 120);
-
-      ctx.fillStyle = '#d8cde6';
-      ctx.font = 'italic 18px "Playfair Display", serif';
-      ctx.fillText('Bu belge ile gökyüzündeki aşağıdaki koordinatlara sahip gök cisminin sonsuza dek tescil edildiği onaylanır.', 600, 165);
-
-      // 4. Yıldız Sahibi: Ecrin
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 56px "Playfair Display", Georgia, serif';
-      ctx.fillText(`✨  ${CONFIG.partnerName}  ✨`, 600, 260);
-
-      // 5. Özellikler Tablosu
-      const specs = [
-        ['Takımyıldızı', CONFIG.star.constellation],
-        ['Galaktik Koordinatlar', CONFIG.star.coordinates],
-        ['Uzaklık Derecesi', CONFIG.star.distance],
-        ['Parlaklık (Magnitude)', CONFIG.star.magnitude]
-      ];
-
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-      ctx.fillRect(150, 310, 900, 260);
-      ctx.strokeStyle = 'rgba(252, 231, 161, 0.35)';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(150, 310, 900, 260);
-
-      specs.forEach(([label, val], idx) => {
-        const row = Math.floor(idx / 2);
-        const col = idx % 2;
-        const x = col === 0 ? 200 : 670;
-        const y = 370 + row * 110;
-
-        ctx.textAlign = 'left';
-        ctx.fillStyle = '#fce7a1';
-        ctx.font = 'bold 15px sans-serif';
-        ctx.fillText(label.toUpperCase(), x, y);
-
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '22px sans-serif';
-        ctx.fillText(val, x, y + 36);
-      });
-
-      // 6. İmzalar ve Mühür
-      ctx.fillStyle = '#fce7a1';
-      ctx.font = 'italic 34px "Dancing Script", cursive, serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(CONFIG.yourName, 320, 715);
-      ctx.fillStyle = '#b3a2c7';
-      ctx.font = '14px sans-serif';
-      ctx.fillText('Gökbilimci & Sevgilin', 320, 745);
-
-      // Altın Mühür
-      ctx.beginPath();
-      ctx.arc(600, 695, 48, 0, Math.PI * 2);
-      ctx.fillStyle = '#d4af37';
-      ctx.fill();
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      ctx.fillStyle = '#2b1704';
-      ctx.font = 'bold 13px sans-serif';
-      ctx.fillText('DAİMA', 600, 690);
-      ctx.fillText('AŞKLA', 600, 708);
-
-      ctx.fillStyle = '#fce7a1';
-      ctx.font = 'italic 34px "Dancing Script", cursive, serif';
-      ctx.fillText('Sonsuzluk', 880, 715);
-      ctx.fillStyle = '#b3a2c7';
-      ctx.font = '14px sans-serif';
-      ctx.fillText('Geçerlilik Süresi', 880, 745);
-
-      // İndirme
-      const a = document.createElement('a');
-      a.download = `ecrin-yildiz-sertifikasi.png`;
-      a.href = canvas.toDataURL('image/png');
-      a.click();
     });
+  }
+
+  // 🎨 Profesyonel 2000x1420 Yüksek Çözünürlüklü Sertifika Çizimi
+  renderProfessionalCertificateCanvas(canvas, ctx) {
+    const w = 2000;
+    const h = 1420;
+    canvas.width = w;
+    canvas.height = h;
+
+    // 1. Gece Mavisi / Obsidyen Radyal Arka Plan
+    const bgGrad = ctx.createRadialGradient(w / 2, h / 2, 80, w / 2, h / 2, 1100);
+    bgGrad.addColorStop(0, '#1d0e38');
+    bgGrad.addColorStop(0.55, '#0c051a');
+    bgGrad.addColorStop(1, '#05020c');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, w, h);
+
+    // 2. Yıldız Tozları
+    for (let i = 0; i < 280; i++) {
+      const sx = Math.random() * w;
+      const sy = Math.random() * h;
+      const sSize = Math.random() * 2.4 + 0.6;
+      const sAlpha = Math.random() * 0.7 + 0.25;
+      ctx.fillStyle = `rgba(255, 255, 255, ${sAlpha})`;
+      ctx.fillRect(sx, sy, sSize, sSize);
+    }
+
+    // 3. Altın Kenarlıklar & Köşe İşlemeleri
+    ctx.strokeStyle = '#d4af37';
+    ctx.lineWidth = 6;
+    ctx.strokeRect(50, 50, w - 100, h - 100);
+
+    ctx.strokeStyle = 'rgba(252, 231, 161, 0.45)';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(66, 66, w - 132, h - 132);
+
+    // 4 Köşe İşlemesi
+    const cornerSize = 44;
+    const drawCorner = (x, y) => {
+      ctx.strokeStyle = '#fef08a';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(x, y, cornerSize, cornerSize);
+      ctx.fillStyle = '#f59e0b';
+      ctx.font = '24px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('❖', x + cornerSize / 2, y + cornerSize / 2 + 8);
+    };
+    drawCorner(80, 80);
+    drawCorner(w - 80 - cornerSize, 80);
+    drawCorner(80, h - 80 - cornerSize);
+    drawCorner(w - 80 - cornerSize, h - 80 - cornerSize);
+
+    // 4. Kurumsal Üst Başlık & Sicil Amblemi
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#fde68a';
+    ctx.font = '28px serif';
+    ctx.fillText('✦  🪐  ✦', w / 2, 130);
+
+    ctx.fillStyle = '#fbbf24';
+    ctx.font = 'bold 22px "Cinzel", Georgia, serif';
+    ctx.fillText('INTERNATIONAL CELESTIAL STAR REGISTRY', w / 2, 168);
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '16px sans-serif';
+    ctx.fillText('Uluslararası Resmi Göksel Yıldız Sicili & Astronomi Arşivi', w / 2, 198);
+
+    // 5. Ana Belge Başlığı
+    ctx.fillStyle = '#fef08a';
+    ctx.font = 'bold 52px "Cinzel", Georgia, serif';
+    ctx.fillText('YILDIZ TESCİL SERTİFİKASI', w / 2, 275);
+
+    // Tescil Sicil No
+    ctx.fillStyle = 'rgba(251, 191, 36, 0.12)';
+    ctx.fillRect(w / 2 - 290, 295, 580, 38);
+    ctx.strokeStyle = 'rgba(251, 191, 36, 0.4)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(w / 2 - 290, 295, 580, 38);
+
+    ctx.fillStyle = '#fef3c7';
+    ctx.font = 'bold 16px sans-serif';
+    ctx.fillText('Sicil Kayıt No: ISR-2026-ECR-0120-∞  •  ONAYLANDI & MÜHÜRLENDİ', w / 2, 320);
+
+    // 6. Resmi Beyan Paragrafı
+    ctx.fillStyle = '#cbd5e1';
+    ctx.font = 'italic 21px "Playfair Display", Georgia, serif';
+    ctx.fillText('İşbu resmi göksel tescil belgesiyle onaylanır ki; gökyüzünün aşağıda belirtilen kesin astronomik koordinatlarında yer alan yıldız,', w / 2, 385);
+    ctx.fillText('resmi göksel yıldız kataloğunda tescil edilmiş olup sonsuza kadar sadece aşağıdaki hak sahibinin adıyla anılacaktır:', w / 2, 415);
+
+    // 7. Hak Sahibi Hero Plakası (Ecrin)
+    ctx.fillStyle = 'rgba(236, 72, 153, 0.1)';
+    ctx.fillRect(w / 2 - 480, 445, 960, 150);
+    ctx.strokeStyle = 'rgba(251, 191, 36, 0.5)';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(w / 2 - 480, 445, 960, 150);
+
+    ctx.fillStyle = '#fde68a';
+    ctx.font = 'bold 15px sans-serif';
+    ctx.fillText('GÖKSEL HAK SAHİBİ & YILDIZ ADI', w / 2, 480);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 64px "Playfair Display", Georgia, serif';
+    ctx.shadowColor = 'rgba(251, 191, 36, 0.8)';
+    ctx.shadowBlur = 30;
+    ctx.fillText(`✨  ${CONFIG.partnerName}  ✨`, w / 2, 545);
+    ctx.shadowBlur = 0;
+
+    ctx.fillStyle = '#fde68a';
+    ctx.font = 'italic 16px sans-serif';
+    ctx.fillText('✦ Sonsuz Aşkın, Sadakatin ve Işığın Tescilli Yıldızı ✦', w / 2, 580);
+
+    // 8. Astronomik Özellikler Tablosu (2 Sütun x 3 Satır)
+    const tableX = 220;
+    const tableY = 625;
+    const tableW = 1560;
+    const tableH = 360;
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+    ctx.fillRect(tableX, tableY, tableW, tableH);
+    ctx.strokeStyle = 'rgba(251, 191, 36, 0.3)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(tableX, tableY, tableW, tableH);
+
+    // Hücre bölme çizgileri
+    ctx.beginPath();
+    ctx.moveTo(tableX + tableW / 2, tableY);
+    ctx.lineTo(tableX + tableW / 2, tableY + tableH);
+    ctx.moveTo(tableX, tableY + 120);
+    ctx.lineTo(tableX + tableW, tableY + 120);
+    ctx.moveTo(tableX, tableY + 240);
+    ctx.lineTo(tableX + tableW, tableY + 240);
+    ctx.stroke();
+
+    const specItems = [
+      { label: 'TAKIMYILDIZI', val: 'Lir / Sonsuz Kalp (Lyra)' },
+      { label: 'GÖK KOORDİNATLARI (J2000)', val: 'RA 18h 36m 56s | Dec +38° 47′ 01″' },
+      { label: 'DÜNYAYA UZAKLIK', val: '0 Işık Yılı (Kalbimin İçi)' },
+      { label: 'GÖRÜNÜR PARLAKLIK (MAGNITUDE)', val: 'Gözlerinin Işıltısı Kadar Sonsuz' },
+      { label: 'GÖK CİSMİ TÜRÜ', val: 'Mavi-Beyaz Anakol Yıldızı (Vega Civarı)' },
+      { label: 'TESCİL TARİHİ & GEÇERLİLİK', val: '20 Ocak 2026 — Sonsuza Dek (Ömür Boyu)' }
+    ];
+
+    specItems.forEach((item, idx) => {
+      const col = idx % 2;
+      const row = Math.floor(idx / 2);
+      const cellX = tableX + col * (tableW / 2) + 40;
+      const cellY = tableY + row * 120 + 45;
+
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = 'bold 15px sans-serif';
+      ctx.fillText(item.label, cellX, cellY);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '22px sans-serif';
+      ctx.fillText(item.val, cellX, cellY + 38);
+    });
+
+    // 9. İmzalar ve Resmi Altın Mühür
+    const footerY = 1120;
+
+    // Sol İmza: Efe
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#fde68a';
+    ctx.font = 'italic 46px "Dancing Script", cursive, serif';
+    ctx.fillText(CONFIG.yourName, 460, footerY);
+
+    ctx.strokeStyle = 'rgba(251, 191, 36, 0.6)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(310, footerY + 20);
+    ctx.lineTo(610, footerY + 20);
+    ctx.stroke();
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '15px sans-serif';
+    ctx.fillText('Yetkili Gökbilimci & Kalbinin Sahibi', 460, footerY + 48);
+
+    // Orta Mühür: 3D Altın Kabartma
+    const sealX = w / 2;
+    const sealY = footerY + 10;
+    const sealR = 64;
+
+    ctx.beginPath();
+    ctx.arc(sealX, sealY, sealR, 0, Math.PI * 2);
+    const sealGrad = ctx.createRadialGradient(sealX - 20, sealY - 20, 10, sealX, sealY, sealR);
+    sealGrad.addColorStop(0, '#fef08a');
+    sealGrad.addColorStop(0.5, '#eab308');
+    sealGrad.addColorStop(1, '#854d0e');
+    ctx.fillStyle = sealGrad;
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    ctx.fillStyle = '#3e1f05';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillText('★ ★ ★', sealX, sealY - 22);
+    ctx.font = 'bold 18px "Cinzel", Georgia, serif';
+    ctx.fillText('DAİMA', sealX, sealY);
+    ctx.fillText('AŞKLA', sealX, sealY + 20);
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillText('★ ★ ★', sealX, sealY + 38);
+
+    // Sağ İmza: Sonsuzluk
+    ctx.fillStyle = '#fde68a';
+    ctx.font = 'italic 46px "Dancing Script", cursive, serif';
+    ctx.fillText('Sonsuzluk', w - 460, footerY);
+
+    ctx.strokeStyle = 'rgba(251, 191, 36, 0.6)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(w - 610, footerY + 20);
+    ctx.lineTo(w - 310, footerY + 20);
+    ctx.stroke();
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '15px sans-serif';
+    ctx.fillText('Evrensel Aşk Sicili Onayı & Geçerlilik', w - 460, footerY + 48);
+
+    // 10. Alt Güvenlik & Doğrulama Şeridi
+    ctx.fillStyle = '#64748b';
+    ctx.font = '13px sans-serif';
+    ctx.fillText('SECURE REGISTRY ARCHIVE ID: ECR-2026-LYRA-9941  •  DOĞRULANMIŞ RESMİ KAYIT  •  TÜM EVRENDE GEÇERLİDİR', w / 2, h - 75);
+  }
+
+  // 🖼️ Sertifika Önizleme Lightbox'ı (İndirme engellendiğinde ya da mobilde doğrudan kaydetme için)
+  showCertificateLightbox(url) {
+    const modal = document.getElementById('lightbox-modal');
+    const img = document.getElementById('lightbox-img');
+    const caption = document.getElementById('lightbox-caption');
+    const prevBtn = document.getElementById('lightbox-prev');
+    const nextBtn = document.getElementById('lightbox-next');
+    if (!modal || !img) return;
+
+    if (prevBtn) prevBtn.style.display = 'none';
+    if (nextBtn) nextBtn.style.display = 'none';
+    img.src = url;
+    if (caption) {
+      caption.innerHTML = `📜 <strong>Resmi Yıldız Tescil Sertifikan Hazır!</strong><br><span style="font-size:0.82rem;color:#fde68a;">💡 Görsele parmağınla basılı tutarak "Fotoğraflara Kaydet" diyebilirsin.</span>`;
+    }
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
   }
 
   // 📲 PROGRESSIVE WEB APP (OFFLINE CACHE)
@@ -1116,6 +1313,9 @@ class UniverseApp {
       currentIndex = elements.indexOf(clickedCard);
       if (currentIndex === -1) currentIndex = 0;
 
+      if (prevBtn) prevBtn.style.display = '';
+      if (nextBtn) nextBtn.style.display = '';
+
       showItem(currentIndex);
       modal.classList.add('active');
       modal.setAttribute('aria-hidden', 'false');
@@ -1125,6 +1325,8 @@ class UniverseApp {
       if (modal) {
         modal.classList.remove('active');
         modal.setAttribute('aria-hidden', 'true');
+        if (prevBtn) prevBtn.style.display = '';
+        if (nextBtn) nextBtn.style.display = '';
       }
     };
 
@@ -1227,6 +1429,10 @@ class UniverseApp {
 
         if (lightbox && lightbox.classList.contains('active')) {
           lightbox.classList.remove('active');
+          const pBtn = document.getElementById('lightbox-prev');
+          const nBtn = document.getElementById('lightbox-next');
+          if (pBtn) pBtn.style.display = '';
+          if (nBtn) nBtn.style.display = '';
         } else if (wishModal && wishModal.classList.contains('active')) {
           wishModal.classList.remove('active');
           document.body.classList.remove('modal-active');
