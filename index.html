@@ -52,7 +52,7 @@
   <meta name="apple-mobile-web-app-title" content="Ecrinim">
 
   <!-- Özel Stiller -->
-  <link rel="stylesheet" href="css/style.css?v=3.4">
+  <link rel="stylesheet" href="css/style.css?v=3.5">
 </head>
 <body>
 
@@ -260,60 +260,80 @@
           <div class="certificate-wrapper">
             <div class="certificate-frame">
               <div class="cert-gold-border">
+                <!-- Üst Resmi Rozet & Başlık -->
                 <div class="cert-header">
-                  <div class="cert-crest">✦ 🪐 ✦</div>
-                  <h2>EVRENSEL YILDIZ TESCİL SERTİFİKASI</h2>
-                  <p class="cert-sub">Bu belge ile gökyüzündeki aşağıdaki koordinatlara sahip gök cisminin sonsuza dek tescil edildiği onaylanır.</p>
+                  <div class="cert-badge-pill">
+                    <span class="pill-sparkle">✦</span> RESMİ GALAKTİK TESCİL BELGESİ <span class="pill-sparkle">✦</span>
+                  </div>
+                  <h2>Evrensel Yıldız Sertifikası</h2>
+                  <p class="cert-sub">Bu belge ile aşağıdaki koordinatlara sahip gök cisminin sonsuza dek sadece senin adınla parlamak üzere tescil edildiği onaylanır.</p>
                 </div>
 
+                <!-- Yıldız Kahraman Alanı (Ecrin) -->
                 <div class="cert-star-highlight">
                   <span class="cert-star-glow">✨</span>
                   <h3 class="partner-name">Ecrin</h3>
                   <span class="cert-star-glow">✨</span>
+                  <div class="cert-star-tag">✦ Sonsuz Aşkın ve Sadakatin Yıldızı ✦</div>
                 </div>
 
+                <!-- 2x2 Astronomik & Manevi Özellikler Tablosu -->
                 <div class="cert-meta-grid">
                   <div class="cert-meta-item">
-                    <span class="meta-label">Takımyıldızı</span>
-                    <span class="meta-val" id="star-constellation-display">Sonsuz Kalp Takımyıldızı</span>
+                    <span class="meta-icon">🌌</span>
+                    <div class="meta-text-wrap">
+                      <span class="meta-label">TAKIMYILDIZI</span>
+                      <span class="meta-val" id="star-constellation-display">Sonsuz Kalp Takımyıldızı</span>
+                    </div>
                   </div>
                   <div class="cert-meta-item">
-                    <span class="meta-label">Galaktik Koordinatlar</span>
-                    <span class="meta-val" id="star-coords-display">RA 18h 36m 56s | Dec +38° 47′ 01″</span>
+                    <span class="meta-icon">📍</span>
+                    <div class="meta-text-wrap">
+                      <span class="meta-label">GÖK KOORDİNATLARI</span>
+                      <span class="meta-val" id="star-coords-display">RA 18h 36m 56s | Dec +38° 47′ 01″</span>
+                    </div>
                   </div>
                   <div class="cert-meta-item">
-                    <span class="meta-label">Uzaklık</span>
-                    <span class="meta-val" id="star-dist-display">0 Işık Yılı (Kalbimin İçi)</span>
+                    <span class="meta-icon">💫</span>
+                    <div class="meta-text-wrap">
+                      <span class="meta-label">UZAKLIK</span>
+                      <span class="meta-val" id="star-dist-display">0 Işık Yılı (Kalbimin İçi)</span>
+                    </div>
                   </div>
                   <div class="cert-meta-item">
-                    <span class="meta-label">Parlaklık (Magnitude)</span>
-                    <span class="meta-val" id="star-mag-display">Gözlerinin Işıltısı Kadar Sonsuz</span>
+                    <span class="meta-icon">🌟</span>
+                    <div class="meta-text-wrap">
+                      <span class="meta-label">PARLAKLIK (MAG)</span>
+                      <span class="meta-val" id="star-mag-display">Gözlerinin Işıltısı Kadar Sonsuz</span>
+                    </div>
                   </div>
                 </div>
 
+                <!-- İmzalar ve Ortada Lüks Mühür (Yatay Denge) -->
                 <div class="cert-footer">
                   <div class="cert-sign">
-                    <span class="sign-line"></span>
                     <span class="sign-name"><span class="your-name">Efe</span></span>
+                    <span class="sign-line"></span>
                     <span class="sign-title">Gökbilimci & Sevgilin</span>
                   </div>
                   <div class="cert-seal">
-                    <div class="gold-wax-seal">
-                      <span>DAİMA<br>AŞKLA</span>
+                    <div class="gold-wax-seal" title="Sonsuzluk Mührü">
+                      <span class="seal-inner-text">DAİMA<br>AŞKLA</span>
                     </div>
                   </div>
                   <div class="cert-sign">
-                    <span class="sign-line"></span>
                     <span class="sign-name">Sonsuzluk</span>
+                    <span class="sign-line"></span>
                     <span class="sign-title">Geçerlilik Süresi</span>
                   </div>
                 </div>
               </div>
             </div>
             
+            <!-- İndirme Barı -->
             <div class="cert-download-bar">
-              <button id="download-cert-btn" class="download-cert-btn">
-                <span>📜 Resmi Yıldız Sertifikasını İndir (PNG)</span> ✨
+              <button type="button" id="download-cert-btn" class="download-cert-btn">
+                <span>📜 Resmi Yıldız Sertifikasını İndir (HD PNG)</span> ✨
               </button>
             </div>
           </div>
@@ -621,6 +641,6 @@
   </div>
 
   <!-- Ana Uygulama Modülü -->
-  <script type="module" src="js/app.js?v=3.9"></script>
+  <script type="module" src="js/app.js?v=4.0"></script>
 </body>
 </html>
