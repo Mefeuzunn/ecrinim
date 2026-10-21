@@ -1845,15 +1845,18 @@ body.portal-open {
     grid-template-columns: 1fr;
   }
 
-  .sender-pills {
-    width: 100%;
+  .device-switch-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 
-  .sender-pill {
-    max-width: none;
-    flex: 1;
-    padding: 8px 12px;
-    font-size: 0.85rem;
+  .device-role-btn {
+    padding: 12px 14px;
+  }
+
+  .notif-status-bar {
+    flex-direction: column;
+    gap: 8px;
   }
 
   .hero-quick-love-btn {
@@ -3472,84 +3475,185 @@ body.portal-open {
   font-style: normal;
 }
 
-/* Gönderen Kimliği Seçici */
-.sender-select-card {
+/* Bu Cihazın Sahibi Kimliği Kartı */
+.device-identity-card {
   width: 100%;
-  max-width: 440px;
-  background: rgba(26, 12, 42, 0.65);
-  border: 1px solid rgba(255, 180, 220, 0.25);
-  border-radius: 20px;
-  padding: 14px 18px;
-  margin-bottom: 26px;
+  max-width: 580px;
+  background: rgba(22, 10, 36, 0.7);
+  border: 1px solid rgba(255, 180, 220, 0.3);
+  border-radius: 22px;
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
+  box-sizing: border-box;
+}
+
+.device-identity-header {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 10px;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
-.sender-label {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--color-primary-light);
-  font-weight: 600;
+.device-icon {
+  font-size: 1.6rem;
+  line-height: 1;
 }
 
-.sender-pills {
-  display: flex;
+.device-text h4 {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.device-text p {
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  line-height: 1.4;
+}
+
+.device-switch-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
   width: 100%;
-  justify-content: center;
 }
 
-.sender-pill {
-  flex: 1;
-  max-width: 180px;
+.device-role-btn {
+  position: relative;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 16px;
-  background: rgba(255, 255, 255, 0.05);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.04);
   border: 1.5px solid rgba(255, 255, 255, 0.12);
-  border-radius: 50px;
+  border-radius: 18px;
   color: var(--text-muted);
-  font-family: var(--font-main);
-  font-size: 0.92rem;
-  font-weight: 600;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
 }
 
-.sender-pill:hover {
-  background: rgba(255, 255, 255, 0.1);
+.device-role-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 150, 190, 0.4);
   color: #fff;
 }
 
-.sender-pill.active {
-  background: linear-gradient(135deg, rgba(255, 75, 130, 0.35), rgba(180, 30, 90, 0.5));
+.device-role-btn.active {
+  background: linear-gradient(135deg, rgba(255, 75, 130, 0.28), rgba(160, 25, 80, 0.45));
   border-color: #ff65a3;
   color: #fff;
-  box-shadow: 0 0 20px rgba(255, 75, 130, 0.45);
+  box-shadow: 0 0 25px rgba(255, 75, 130, 0.35);
 }
 
-.sender-avatar {
-  font-size: 1.15rem;
+.role-avatar {
+  font-size: 1.6rem;
+  line-height: 1;
 }
 
-.sender-check {
-  font-size: 0.82rem;
-  opacity: 0;
-  transition: opacity 0.2s;
+.role-title {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.role-sub {
+  display: block;
+  font-size: 0.72rem;
+  color: #ffd6e8;
+  margin-top: 2px;
+}
+
+.role-check-badge {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  font-size: 0.68rem;
+  font-weight: 700;
   color: #fef08a;
-  font-weight: bold;
+  letter-spacing: 0.5px;
 }
 
-.sender-pill.active .sender-check {
-  opacity: 1;
+.device-role-btn.active .role-check-badge {
+  background: #ff4b8b;
+  color: #fff;
+}
+
+/* Hedef Cihaz Radar Rozeti */
+.heart-target-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 6px 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 150, 190, 0.3);
+  border-radius: 50px;
+  font-size: 0.78rem;
+  color: #fce7f3;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.target-radar-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ff4b8b;
+  box-shadow: 0 0 8px #ff4b8b;
+  animation: radarPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes radarPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.6); opacity: 0.5; }
+}
+
+/* Canlı Teşhis Şeridi */
+.notif-status-bar {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 12px;
+}
+
+.status-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.76rem;
+  color: #e2e8f0;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #eab308;
+}
+
+.status-dot.green {
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+.status-dot.red {
+  background: #ef4444;
+  box-shadow: 0 0 8px #ef4444;
 }
 
 /* DEV 3D KALP BUTONU (GIANT BEATING HEART) */

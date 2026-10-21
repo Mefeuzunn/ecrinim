@@ -52,7 +52,7 @@
   <meta name="apple-mobile-web-app-title" content="Ecrinim">
 
   <!-- Özel Stiller -->
-  <link rel="stylesheet" href="css/style.css?v=3.8">
+  <link rel="stylesheet" href="css/style.css?v=4.0">
 </head>
 <body>
 
@@ -410,25 +410,38 @@
             
             <div class="love-header-intro">
               <div class="love-badge-crest">✦ 💓 ✦</div>
-              <h2>Kozmik Sevgi Sinyali</h2>
-              <p class="love-subtitle">
-                Bu tuşa bastığında, sevgilinin telefonuna anında <em>"Seni Seviyorum"</em> bildirimi ve kalp atışı sinyali ulaşır.
+              <h2 id="love-panel-title">Ecrin'in Telefonuna Sevgi Gönder</h2>
+              <p class="love-subtitle" id="love-panel-subtitle">
+                Bu tuşa bastığında <strong>yalnızca sevgilinin telefonuna</strong> bildirim, canlı kalp atışı ve aşk mesajı ulaşır.
               </p>
             </div>
 
-            <!-- Gönderen Kimliği Seçici (Efe / Ecrin) -->
-            <div class="sender-select-card">
-              <span class="sender-label">Şu An Kim Gönderiyor?</span>
-              <div class="sender-pills" id="sender-pills">
-                <button type="button" class="sender-pill active" data-sender="Efe">
-                  <span class="sender-avatar">🧑🏻‍🚀</span>
-                  <span class="sender-name">Efe</span>
-                  <span class="sender-check">✓</span>
+            <!-- Bu Telefonun Sahibi Kimliği (Sadece Karşı Tarafa Gönderme Mantığı) -->
+            <div class="device-identity-card">
+              <div class="device-identity-header">
+                <span class="device-icon">📱</span>
+                <div class="device-text">
+                  <h4>Bu Telefon Kimin?</h4>
+                  <p>Seçilen kimlik bu telefona özeldir; sevgi sinyalleri <strong>yalnızca karşı tarafın cihazına</strong> gider.</p>
+                </div>
+              </div>
+
+              <div class="device-switch-row" id="device-switch-row">
+                <button type="button" class="device-role-btn active" data-role="Efe">
+                  <span class="role-avatar">🧑🏻‍🚀</span>
+                  <div class="role-details">
+                    <span class="role-title">Efe'nin Telefonu</span>
+                    <span class="role-sub">Sinyaller Ecrin'e gider ➔</span>
+                  </div>
+                  <span class="role-check-badge">✓ Bu Cihaz</span>
                 </button>
-                <button type="button" class="sender-pill" data-sender="Ecrin">
-                  <span class="sender-avatar">👸🏻</span>
-                  <span class="sender-name">Ecrin</span>
-                  <span class="sender-check">✓</span>
+                <button type="button" class="device-role-btn" data-role="Ecrin">
+                  <span class="role-avatar">👸🏻</span>
+                  <div class="role-details">
+                    <span class="role-title">Ecrin'in Telefonu</span>
+                    <span class="role-sub">Sinyaller Efe'ye gider ➔</span>
+                  </div>
+                  <span class="role-check-badge">✓ Bu Cihaz</span>
                 </button>
               </div>
             </div>
@@ -444,11 +457,16 @@
               <button type="button" id="giant-love-heart-btn" class="giant-love-heart-btn" aria-label="Seni Seviyorum Sinyali Gönder">
                 <div class="heart-inner-shape">
                   <span class="heart-glow-emoji">💖</span>
-                  <span class="heart-cta-title">SENİ SEVİYORUM</span>
-                  <span class="heart-cta-sub">Dokun & Kalbini Hissettir ✨</span>
+                  <span class="heart-cta-title" id="heart-cta-title">ECRİN'E GÖNDER ❤️</span>
+                  <span class="heart-cta-sub" id="heart-cta-sub">Dokun & Kalbini Titret ✨</span>
                 </div>
               </button>
               
+              <div class="heart-target-pill" id="heart-target-pill">
+                <span class="target-radar-dot"></span>
+                <span id="target-phone-name">Hedef: Ecrin'in Telefonu (Kişiye Özel Hat)</span>
+              </div>
+
               <div id="love-sent-toast" class="love-sent-toast" aria-live="polite">
                 <span class="toast-sparkle">✨</span>
                 <span id="toast-text">Sevgi sinyalin başarıyla gönderildi! ❤️</span>
@@ -485,29 +503,41 @@
               </div>
             </div>
 
-            <!-- TELEFON BİLDİRİM KONTROL KARTI -->
+            <!-- TELEFON BİLDİRİM KONTROL & TEŞHİS KARTI -->
             <div class="phone-notification-card">
               <div class="notif-card-header">
                 <div class="notif-icon-bubble">🔔</div>
                 <div class="notif-card-info">
-                  <h4>Telefon Kilit Ekranı Bildirimleri</h4>
-                  <p>Uygulama kapalıyken veya telefon kilitliyken sevgilinden gelen "Seni Seviyorum" sinyalleri anında ekranına düşsün.</p>
+                  <h4>Kilit Ekranı Bildirim Durumu</h4>
+                  <p>Telefonunuz kilitliyken veya uygulama kapalıyken sevgilinizden gelen "Seni Seviyorum" sinyalleri kilit ekranınıza düşer.</p>
                 </div>
               </div>
               
+              <!-- Canlı Teşhis Şeridi -->
+              <div class="notif-status-bar">
+                <div class="status-item">
+                  <span class="status-dot green"></span>
+                  <span class="status-text">İletim Kanalı: <strong>Canlı Çift Hat</strong></span>
+                </div>
+                <div class="status-item">
+                  <span class="status-dot" id="perm-status-dot"></span>
+                  <span class="status-text" id="perm-status-text">Kilit Ekranı İzni: Denetleniyor...</span>
+                </div>
+              </div>
+
               <!-- Bildirim İzin Butonu / Durumu -->
               <div class="notif-action-row">
                 <button type="button" id="enable-notifications-btn" class="enable-notif-btn">
                   <span class="btn-icon">🔔</span>
-                  <span id="notif-btn-text">Bildirimleri Etkinleştir</span>
+                  <span id="notif-btn-text">Kilit Ekranı Bildirimlerini Aç</span>
                 </button>
                 <button type="button" id="test-notification-btn" class="test-notif-btn" title="Kendi cihazında test et">
-                  <span>Örnek Bildirim Gönder 📲</span>
+                  <span>Bu Cihazda Test Et 📲</span>
                 </button>
               </div>
               
               <div class="notif-guide-hint">
-                💡 <strong>iPhone Kullanıcıları:</strong> Bildirimleri kilit ekranında alabilmek için Safari'den <em>Paylaş ➔ Ana Ekrana Ekle</em> diyerek uygulamayı yüklemiş olmanız gerekmektedir.
+                💡 <strong>iPhone (iOS) Kullanıcıları İçin:</strong> Bildirimleri kilit ekranında alabilmek için Safari'den <em>Paylaş ➔ Ana Ekrana Ekle</em> diyerek uygulamayı yüklemiş olmanız gerekmektedir.
               </div>
             </div>
 
@@ -855,6 +885,6 @@
   </div>
 
   <!-- Ana Uygulama Modülü -->
-  <script type="module" src="js/app.js?v=4.3"></script>
+  <script type="module" src="js/app.js?v=4.5"></script>
 </body>
 </html>

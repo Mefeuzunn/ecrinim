@@ -1394,19 +1394,54 @@ class UniverseApp {
     });
   }
 
-  // 💓 KOZMİK SEVGİ TUŞU & KALP SİNYALİ SİSTEMİ (PUSH BİLDİRİM & CANLI İLETİM)
+  // 💓 KOZMİK SEVGİ TUŞU & KALP SİNYALİ SİSTEMİ (ÇİFT HATLI YÖNLÜ BİLDİRİM & CANLI İLETİM)
   setupLoveSignal() {
-    const NTFY_TOPIC = 'ecrinim_love_signal_9941';
-    const NTFY_URL = `https://ntfy.sh/${NTFY_TOPIC}`;
+    // Çift Hat Yön Konfigürasyonu:
+    // Sinyaller kesinlikle sadece karşı tarafın telefonuna gider; gönderen cihaz asla kendi sinyalini almaz.
+    const CHANNELS = {
+      Efe: {
+        role: 'Efe',
+        targetName: 'Ecrin',
+        publishTopic: 'ecrinim_to_ecrin_9941', // Efe bu kanala gönderir (Ecrin'in kutusu)
+        listenTopic: 'ecrinim_to_efe_9941',     // Efe bu kanalı dinler (Efe'nin kutusu)
+        panelTitle: "Ecrin'in Telefonuna Sevgi Gönder",
+        panelSub: "Bu tuşa bastığında <strong>yalnızca Ecrin'in telefonuna</strong> bildirim, canlı kalp atışı ve aşk mesajı ulaşır.",
+        ctaTitle: "ECRİN'E GÖNDER ❤️",
+        ctaSub: "Dokun & Kalbini Titret ✨",
+        targetPill: "Hedef: Ecrin'in Telefonu (Kişiye Özel Hat 📡)",
+        sentToast: "Sevgi sinyalin Ecrin'in telefonuna iletildi! 🚀❤️",
+        notificationTitle: "❤️ Efe'den Sevgi Sinyali!"
+      },
+      Ecrin: {
+        role: 'Ecrin',
+        targetName: 'Efe',
+        publishTopic: 'ecrinim_to_efe_9941',    // Ecrin bu kanala gönderir (Efe'nin kutusu)
+        listenTopic: 'ecrinim_to_ecrin_9941',  // Ecrin bu kanalı dinler (Ecrin'in kutusu)
+        panelTitle: "Efe'nin Telefonuna Sevgi Gönder",
+        panelSub: "Bu tuşa bastığında <strong>yalnızca Efe'nin telefonuna</strong> bildirim, canlı kalp atışı ve aşk mesajı ulaşır.",
+        ctaTitle: "EFE'YE GÖNDER 💖",
+        ctaSub: "Dokun & Kalbini Titret ✨",
+        targetPill: "Hedef: Efe'nin Telefonu (Kişiye Özel Hat 📡)",
+        sentToast: "Sevgi sinyalin Efe'nin telefonuna iletildi! 🚀💖",
+        notificationTitle: "💖 Ecrin'den Sevgi Sinyali!"
+      }
+    };
 
     // DOM Elemanları
+    const panelTitle = document.getElementById('love-panel-title');
+    const panelSubtitle = document.getElementById('love-panel-subtitle');
+    const roleButtons = document.querySelectorAll('.device-role-btn');
     const giantHeartBtn = document.getElementById('giant-love-heart-btn');
-    const senderPills = document.querySelectorAll('.sender-pill');
+    const heartCtaTitle = document.getElementById('heart-cta-title');
+    const heartCtaSub = document.getElementById('heart-cta-sub');
+    const targetPhoneName = document.getElementById('target-phone-name');
     const loveChips = document.querySelectorAll('.love-chip');
     const customInput = document.getElementById('custom-love-input');
     const enableNotifBtn = document.getElementById('enable-notifications-btn');
     const notifBtnText = document.getElementById('notif-btn-text');
     const testNotifBtn = document.getElementById('test-notification-btn');
+    const permStatusDot = document.getElementById('perm-status-dot');
+    const permStatusText = document.getElementById('perm-status-text');
     const totalCountEl = document.getElementById('total-love-count');
     const lastTimeEl = document.getElementById('last-love-time');
     const toastEl = document.getElementById('love-sent-toast');
@@ -1422,27 +1457,45 @@ class UniverseApp {
     const incomingReplyBtn = document.getElementById('incoming-love-reply-btn');
 
     // Durum Değişkenleri
-    let currentSender = localStorage.getItem('ecrin_sender') || 'Efe';
+    let currentRole = localStorage.getItem('ecrinim_device_role') || 'Efe';
     let totalLoveCount = parseInt(localStorage.getItem('ecrin_love_count') || '12', 10);
     let selectedMessage = "Seni çok seviyorum canım sevgilim! Kalbim daima senin için çarpıyor... 💖";
     let isSending = false;
     let eventSource = null;
     let lastSentTimestamp = 0;
+    let reconnectTimeout = null;
+    const seenMessageIds = new Set();
 
-    // 1. Gönderen Kimliğini Başlat
-    const setSender = (sender) => {
-      currentSender = sender;
-      localStorage.setItem('ecrin_sender', sender);
-      senderPills.forEach(p => {
-        p.classList.toggle('active', p.dataset.sender === sender);
+    // 1. Cihaz Kimliğini ve UI'ı Güncelleme
+    const applyDeviceRole = (role, notify = false) => {
+      if (!CHANNELS[role]) role = 'Efe';
+      currentRole = role;
+      localStorage.setItem('ecrinim_device_role', role);
+
+      const cfg = CHANNELS[role];
+
+      roleButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.role === role);
       });
-    };
-    setSender(currentSender);
 
-    senderPills.forEach(p => {
-      p.addEventListener('click', () => {
-        this.triggerHaptic(12);
-        setSender(p.dataset.sender);
+      if (panelTitle) panelTitle.textContent = cfg.panelTitle;
+      if (panelSubtitle) panelSubtitle.innerHTML = cfg.panelSub;
+      if (heartCtaTitle) heartCtaTitle.textContent = cfg.ctaTitle;
+      if (heartCtaSub) heartCtaSub.textContent = cfg.ctaSub;
+      if (targetPhoneName) targetPhoneName.textContent = cfg.targetPill;
+
+      // Dinleme kanalını hemen bu cihazın rolüne göre güncelle
+      connectSSE();
+
+      if (notify) {
+        showToast(`Bu cihaz: ${role === 'Efe' ? "Efe'nin Telefonu" : "Ecrin'in Telefonu"} olarak kaydedildi. Sinyaller sadece ${cfg.targetName}'e gidecek! ✨`);
+      }
+    };
+
+    roleButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.triggerHaptic(15);
+        applyDeviceRole(btn.dataset.role, true);
       });
     });
 
@@ -1488,8 +1541,8 @@ class UniverseApp {
 
     // 5. Uçuşan Kalp Parçacıkları (Floating Hearts)
     const spawnFloatingHearts = () => {
-      const emojis = ['💖', '❤️', '💕', '💓', '✨', '🌸', '💘'];
-      for (let i = 0; i < 14; i++) {
+      const emojis = ['💖', '❤️', '💕', '💓', '✨', '🌸', '💘', '💝'];
+      for (let i = 0; i < 16; i++) {
         setTimeout(() => {
           const el = document.createElement('div');
           el.className = 'floating-love-heart';
@@ -1502,56 +1555,62 @@ class UniverseApp {
           el.style.setProperty('--rand-x', randX);
           document.body.appendChild(el);
           setTimeout(() => el.remove(), 2400);
-        }, i * 65);
+        }, i * 60);
       }
     };
 
-    // 6. Sevgi Sinyali Gönderme Fonksiyonu
+    // 6. Yönlü Sevgi Sinyali Gönderme Fonksiyonu (Yalnızca Karşı Tarafa Gider)
     const sendLove = async (customText = null) => {
       const now = Date.now();
       if (now - lastSentTimestamp < 1200 || isSending) return;
       lastSentTimestamp = now;
       isSending = true;
 
+      const cfg = CHANNELS[currentRole];
       const messageToSend = customText || (customInput && customInput.value.trim()) || selectedMessage;
-      const recipientName = currentSender === 'Efe' ? 'Ecrin' : 'Efe';
+      const uniqueMsgId = 'love_' + now + '_' + Math.random().toString(36).substring(2, 7);
 
-      // Yerel Animasyonlar ve Sesler
+      // Kendi cihazında yerel pozitif görsel & işitsel geri bildirimler
       this.triggerHaptic(35);
       cosmicAudio.playHeartbeat();
       this.triggerCosmicConfetti();
       spawnFloatingHearts();
 
       if (giantHeartBtn) {
-        giantHeartBtn.style.transform = 'scale(0.9)';
+        giantHeartBtn.style.transform = 'scale(0.92)';
         setTimeout(() => {
           if (giantHeartBtn) giantHeartBtn.style.transform = '';
-        }, 200);
+        }, 220);
       }
 
       totalLoveCount++;
       localStorage.setItem('ecrin_love_count', totalLoveCount.toString());
       const timeStr = new Intl.DateTimeFormat('tr-TR', { hour: '2-digit', minute: '2-digit' }).format(new Date());
-      localStorage.setItem('ecrin_last_love_time', `${currentSender} (${timeStr})`);
+      localStorage.setItem('ecrin_last_love_time', `${currentRole} ➔ ${cfg.targetName} (${timeStr})`);
       updateStatsUI();
 
-      showToast(`Sevgi sinyalin ${recipientName}'in telefonuna gönderildi! 🚀❤️`);
+      showToast(cfg.sentToast);
 
-      // Gerçek Zamanlı ntfy POST İsteği
+      // Karşı tarafın özel hattına iletim POST isteği
       try {
-        await fetch(NTFY_URL, {
+        const payload = JSON.stringify({
+          id: uniqueMsgId,
+          sender: currentRole,
+          recipient: cfg.targetName,
+          text: messageToSend,
+          time: now
+        });
+
+        await fetch(`https://ntfy.sh/${cfg.publishTopic}`, {
           method: 'POST',
           headers: {
-            'Title': `${currentSender === 'Efe' ? '❤️ Efe\'den' : '💖 Ecrin\'den'} Sevgi Sinyali: Seni Seviyorum!`,
+            'Title': `${currentRole === 'Efe' ? '❤️ Efe\'den' : '💖 Ecrin\'den'} Sevgi Sinyali: Seni Seviyorum!`,
             'Priority': 'urgent',
             'Tags': 'heart,sparkles',
-            'Click': 'https://ecrinim-omega.vercel.app/#love'
+            'Click': 'https://ecrinim-omega.vercel.app/#love',
+            'Icon': 'https://ecrinim-omega.vercel.app/apple-touch-icon.png'
           },
-          body: JSON.stringify({
-            sender: currentSender,
-            text: messageToSend,
-            time: Date.now()
-          })
+          body: payload
         });
       } catch (err) {
         console.warn('Sinyal iletim uyarısı:', err);
@@ -1564,41 +1623,49 @@ class UniverseApp {
       giantHeartBtn.addEventListener('click', () => sendLove());
     }
 
-    // 7. Bildirim İzni ve Test Butonları
+    // 7. Profesyonel Bildirim İzin & Canlı Teşhis Yönetimi
     const updateNotificationStatus = () => {
       if (!('Notification' in window)) {
-        if (notifBtnText) notifBtnText.textContent = 'Bildirimler Desteklenmiyor';
+        if (permStatusDot) permStatusDot.className = 'status-dot red';
+        if (permStatusText) permStatusText.innerHTML = 'Kilit Ekranı: <strong>Desteklenmiyor</strong>';
+        if (notifBtnText) notifBtnText.textContent = 'Tarayıcı Desteklemiyor';
         if (enableNotifBtn) enableNotifBtn.disabled = true;
         return;
       }
 
-      if (Notification.permission === 'granted') {
-        if (enableNotifBtn) {
-          enableNotifBtn.classList.add('granted');
-          if (notifBtnText) notifBtnText.textContent = '✅ Bildirimler Aktif';
-        }
+      const state = Notification.permission;
+      if (state === 'granted') {
+        if (permStatusDot) permStatusDot.className = 'status-dot green';
+        if (permStatusText) permStatusText.innerHTML = 'Kilit Ekranı İzni: <strong style="color:#10b981;">Aktif ✅</strong>';
+        if (notifBtnText) notifBtnText.textContent = '✅ Kilit Ekranı Bildirimleri Açık';
+        if (enableNotifBtn) enableNotifBtn.classList.add('granted');
+      } else if (state === 'denied') {
+        if (permStatusDot) permStatusDot.className = 'status-dot red';
+        if (permStatusText) permStatusText.innerHTML = 'Kilit Ekranı İzni: <strong style="color:#ef4444;">Engellendi ✕ (Ayarlardan Açın)</strong>';
+        if (notifBtnText) notifBtnText.textContent = '❌ Bildirim İzni Engellendi';
+        if (enableNotifBtn) enableNotifBtn.classList.remove('granted');
       } else {
-        if (enableNotifBtn) {
-          enableNotifBtn.classList.remove('granted');
-          if (notifBtnText) notifBtnText.textContent = '🔔 Bildirimleri Etkinleştir';
-        }
+        if (permStatusDot) permStatusDot.className = 'status-dot';
+        if (permStatusText) permStatusText.innerHTML = 'Kilit Ekranı İzni: <strong style="color:#f59e0b;">Bekliyor (Açınız)</strong>';
+        if (notifBtnText) notifBtnText.textContent = '🔔 Kilit Ekranı Bildirimlerini Aç';
+        if (enableNotifBtn) enableNotifBtn.classList.remove('granted');
       }
     };
     updateNotificationStatus();
 
     const requestPermission = async () => {
       if (!('Notification' in window)) {
-        alert('Cihazınız web bildirimlerini desteklemiyor.');
+        alert('Cihazınız web bildirimlerini desteklemiyor. iOS kullanıyorsanız önce Paylaş ➔ Ana Ekrana Ekle yapmalısınız.');
         return;
       }
       try {
         const perm = await Notification.requestPermission();
         updateNotificationStatus();
         if (perm === 'granted') {
-          showToast('Harika! Bildirimler açıldı, artık kilit ekranına düşecek.');
-          sendTestNotification();
-        } else {
-          alert('Bildirim izni verilmedi. Telefonunuzun ayarlarından veya tarayıcıdan izin verebilirsiniz.');
+          showToast('Harika! Kilit ekranı bildirimleri aktif edildi.');
+          sendLocalTestNotification();
+        } else if (perm === 'denied') {
+          alert('Bildirim izni reddedildi. Kilit ekranında bildirim alabilmek için telefonunuzun ayarlarından siteye bildirim izni vermeniz gerekir.');
         }
       } catch (e) {
         console.warn(e);
@@ -1609,9 +1676,11 @@ class UniverseApp {
       enableNotifBtn.addEventListener('click', requestPermission);
     }
 
-    const sendTestNotification = () => {
-      const title = '❤️ Seni Seviyorum!';
-      const body = `${currentSender === 'Efe' ? 'Efe' : 'Ecrin'} sana kalbinden bir sevgi sinyali gönderdi... Dokun ve hisset ✨`;
+    // Yerel Bildirim Testi (Sadece bu telefonda test eder, karşı tarafa gitmez)
+    const sendLocalTestNotification = () => {
+      const cfg = CHANNELS[currentRole];
+      const title = '❤️ Seni Seviyorum! (Test Bildirimi)';
+      const body = `Kilit ekranı bildirimlerin başarıyla çalışıyor! ${cfg.targetName}'den gelen sevgi sinyalleri buraya düşecek ✨`;
 
       if (navigator.serviceWorker && navigator.serviceWorker.controller) {
         navigator.serviceWorker.ready.then(reg => {
@@ -1639,8 +1708,8 @@ class UniverseApp {
         if (Notification.permission !== 'granted') {
           requestPermission();
         } else {
-          sendTestNotification();
-          showToast('Örnek bildirim telefonuna gönderildi! 📲');
+          sendLocalTestNotification();
+          showToast('Örnek bildirim bu cihaza başarıyla gönderildi! 📲');
         }
       });
     }
@@ -1675,15 +1744,28 @@ class UniverseApp {
       });
     }
 
-    // 9. Canlı SSE (Server-Sent Events) Bağlantısı
+    // 9. Canlı SSE (Server-Sent Events) - Sadece Bu Cihaza Gelen Hattı Dinler
     const connectSSE = () => {
       if (typeof EventSource === 'undefined') return;
+      const cfg = CHANNELS[currentRole];
+      if (!cfg) return;
+
       try {
-        if (eventSource) eventSource.close();
-        eventSource = new EventSource(`${NTFY_URL}/sse`);
+        if (eventSource) {
+          eventSource.close();
+          eventSource = null;
+        }
+
+        if (reconnectTimeout) {
+          clearTimeout(reconnectTimeout);
+          reconnectTimeout = null;
+        }
+
+        const listenUrl = `https://ntfy.sh/${cfg.listenTopic}/sse`;
+        eventSource = new EventSource(listenUrl);
 
         eventSource.onopen = () => {
-          if (liveStatusText) liveStatusText.textContent = 'Canlı Sevgi Hattı Aktif';
+          if (liveStatusText) liveStatusText.textContent = `Canlı Hat: ${cfg.role} Dinlemede`;
         };
 
         eventSource.onmessage = (event) => {
@@ -1691,37 +1773,54 @@ class UniverseApp {
             const raw = JSON.parse(event.data);
             if (raw.event !== 'message' || !raw.message) return;
 
+            // Tekilleştirme (aynı mesajı tekrar tetiklememek için)
+            if (raw.id && seenMessageIds.has(raw.id)) return;
+            if (raw.id) {
+              seenMessageIds.add(raw.id);
+              if (seenMessageIds.size > 150) {
+                const first = seenMessageIds.values().next().value;
+                seenMessageIds.delete(first);
+              }
+            }
+
             let parsedBody = null;
             try {
               parsedBody = JSON.parse(raw.message);
             } catch (e) {
-              parsedBody = { sender: 'Sevgilin', text: raw.message };
+              parsedBody = { sender: cfg.targetName, text: raw.message, time: Date.now() };
             }
 
-            // Kendi gönderdiğimiz ve henüz 3.5 saniye geçmemiş sinyali es geç
-            if (parsedBody.sender === currentSender && Date.now() - lastSentTimestamp < 3500) {
+            // Güvenlik denetimi: Eğer bir şekilde kendi gönderdiğimiz mesaj gelirse (asla olmamalı) yok say
+            if (parsedBody.sender === currentRole) {
               return;
             }
 
-            const sender = parsedBody.sender || (currentSender === 'Efe' ? 'Ecrin' : 'Efe');
+            // Mesaj çok eskiyse (2 dakikadan eski geçmiş SSE kaydı) anlık popup patlatma
+            const msgAge = Date.now() - (parsedBody.time || Date.now());
+            if (msgAge > 120000) {
+              return;
+            }
+
+            const sender = parsedBody.sender || cfg.targetName;
             const text = parsedBody.text || raw.message;
 
-            // Bildirim ve Modal Göster
+            // Kilit ekranında / arka planda ise Service Worker bildirimi patlat
             if (Notification.permission === 'granted' && document.hidden) {
               if (navigator.serviceWorker && navigator.serviceWorker.controller) {
                 navigator.serviceWorker.ready.then(reg => {
                   reg.showNotification(`❤️ ${sender}'den Sevgi Sinyali!`, {
-                    body: text,
+                    body: `"${text}"`,
                     icon: '/apple-touch-icon.png',
                     badge: '/assets/icons/favicon-32x32.png',
                     vibrate: [200, 100, 200, 100, 300],
-                    tag: 'love-signal',
+                    tag: 'love-signal-' + Date.now(),
                     renotify: true,
                     data: { url: '/#love' }
                   });
                 });
               }
             } else {
+              // Uygulama ekranda açıksa görsel kutlama modalını aç
               showIncomingLoveModal(sender, text);
             }
 
@@ -1729,7 +1828,7 @@ class UniverseApp {
             totalLoveCount++;
             localStorage.setItem('ecrin_love_count', totalLoveCount.toString());
             const timeStr = new Intl.DateTimeFormat('tr-TR', { hour: '2-digit', minute: '2-digit' }).format(new Date());
-            localStorage.setItem('ecrin_last_love_time', `${sender} (${timeStr})`);
+            localStorage.setItem('ecrin_last_love_time', `${sender} ➔ Bu Cihaz (${timeStr})`);
             updateStatsUI();
 
           } catch (e) {
@@ -1738,19 +1837,31 @@ class UniverseApp {
         };
 
         eventSource.onerror = () => {
-          if (liveStatusText) liveStatusText.textContent = 'Canlı Hat Yenileniyor...';
+          if (liveStatusText) liveStatusText.textContent = 'Bağlantı Yenileniyor...';
+          if (eventSource) {
+            eventSource.close();
+            eventSource = null;
+          }
+          // 4 saniye sonra otomatik yeniden bağlan
+          reconnectTimeout = setTimeout(() => {
+            connectSSE();
+          }, 4000);
         };
       } catch (e) {
         console.warn('SSE bağlantı hatası:', e);
       }
     };
 
-    connectSSE();
+    // İlk kurulumu başlat
+    applyDeviceRole(currentRole, false);
 
-    // Sayfa görünürlüğü değiştiğinde SSE'yi tazele
+    // Sayfa görünürlüğü değiştiğinde (ekran kilidi açıldığında) SSE ve izin durumunu tazele
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) {
-        connectSSE();
+        updateNotificationStatus();
+        if (!eventSource || eventSource.readyState === EventSource.CLOSED) {
+          connectSSE();
+        }
       }
     });
 
