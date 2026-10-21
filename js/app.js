@@ -59,6 +59,7 @@ class UniverseApp {
     this.setupMobilePullToDismiss();
     this.setupVoiceNote();
     this.setupCertificateDownload();
+    this.setupLoveSignal();
     this.registerServiceWorker();
     this.setupMusicControls();
     this.setupLightbox();
@@ -1393,11 +1394,400 @@ class UniverseApp {
     });
   }
 
+  // 💓 KOZMİK SEVGİ TUŞU & KALP SİNYALİ SİSTEMİ (PUSH BİLDİRİM & CANLI İLETİM)
+  setupLoveSignal() {
+    const NTFY_TOPIC = 'ecrinim_love_signal_9941';
+    const NTFY_URL = `https://ntfy.sh/${NTFY_TOPIC}`;
+
+    // DOM Elemanları
+    const giantHeartBtn = document.getElementById('giant-love-heart-btn');
+    const senderPills = document.querySelectorAll('.sender-pill');
+    const loveChips = document.querySelectorAll('.love-chip');
+    const customInput = document.getElementById('custom-love-input');
+    const enableNotifBtn = document.getElementById('enable-notifications-btn');
+    const notifBtnText = document.getElementById('notif-btn-text');
+    const testNotifBtn = document.getElementById('test-notification-btn');
+    const totalCountEl = document.getElementById('total-love-count');
+    const lastTimeEl = document.getElementById('last-love-time');
+    const toastEl = document.getElementById('love-sent-toast');
+    const toastText = document.getElementById('toast-text');
+    const liveStatusText = document.getElementById('live-connection-status');
+
+    // Gelen Aşk Modalı
+    const incomingModal = document.getElementById('incoming-love-modal');
+    const incomingCloseBtn = document.getElementById('close-incoming-love-btn');
+    const incomingSenderEl = document.getElementById('incoming-love-sender');
+    const incomingMessageEl = document.getElementById('incoming-love-message');
+    const incomingTimeEl = document.getElementById('incoming-love-time');
+    const incomingReplyBtn = document.getElementById('incoming-love-reply-btn');
+
+    // Durum Değişkenleri
+    let currentSender = localStorage.getItem('ecrin_sender') || 'Efe';
+    let totalLoveCount = parseInt(localStorage.getItem('ecrin_love_count') || '12', 10);
+    let selectedMessage = "Seni çok seviyorum canım sevgilim! Kalbim daima senin için çarpıyor... 💖";
+    let isSending = false;
+    let eventSource = null;
+    let lastSentTimestamp = 0;
+
+    // 1. Gönderen Kimliğini Başlat
+    const setSender = (sender) => {
+      currentSender = sender;
+      localStorage.setItem('ecrin_sender', sender);
+      senderPills.forEach(p => {
+        p.classList.toggle('active', p.dataset.sender === sender);
+      });
+    };
+    setSender(currentSender);
+
+    senderPills.forEach(p => {
+      p.addEventListener('click', () => {
+        this.triggerHaptic(12);
+        setSender(p.dataset.sender);
+      });
+    });
+
+    // 2. Hazır Mesaj Seçici
+    loveChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        this.triggerHaptic(10);
+        loveChips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        selectedMessage = chip.dataset.msg;
+        if (customInput) customInput.value = '';
+      });
+    });
+
+    if (customInput) {
+      customInput.addEventListener('input', () => {
+        if (customInput.value.trim() !== '') {
+          loveChips.forEach(c => c.classList.remove('active'));
+          selectedMessage = customInput.value.trim();
+        }
+      });
+    }
+
+    // 3. İstatistikleri Güncelle
+    const updateStatsUI = () => {
+      if (totalCountEl) totalCountEl.textContent = totalLoveCount.toString();
+      const last = localStorage.getItem('ecrin_last_love_time');
+      if (lastTimeEl) {
+        lastTimeEl.textContent = last ? last : 'Henüz sinyal yok';
+      }
+    };
+    updateStatsUI();
+
+    // 4. Toast Mesajı Gösterici
+    const showToast = (msg) => {
+      if (!toastEl) return;
+      if (toastText) toastText.textContent = msg;
+      toastEl.classList.add('show');
+      setTimeout(() => {
+        toastEl.classList.remove('show');
+      }, 3500);
+    };
+
+    // 5. Uçuşan Kalp Parçacıkları (Floating Hearts)
+    const spawnFloatingHearts = () => {
+      const emojis = ['💖', '❤️', '💕', '💓', '✨', '🌸', '💘'];
+      for (let i = 0; i < 14; i++) {
+        setTimeout(() => {
+          const el = document.createElement('div');
+          el.className = 'floating-love-heart';
+          el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+          const startX = (window.innerWidth / 2) + (Math.random() * 120 - 60);
+          const startY = (window.innerHeight / 2) + 60 + (Math.random() * 40 - 20);
+          const randX = (Math.random() * 260 - 130) + 'px';
+          el.style.left = `${startX}px`;
+          el.style.top = `${startY}px`;
+          el.style.setProperty('--rand-x', randX);
+          document.body.appendChild(el);
+          setTimeout(() => el.remove(), 2400);
+        }, i * 65);
+      }
+    };
+
+    // 6. Sevgi Sinyali Gönderme Fonksiyonu
+    const sendLove = async (customText = null) => {
+      const now = Date.now();
+      if (now - lastSentTimestamp < 1200 || isSending) return;
+      lastSentTimestamp = now;
+      isSending = true;
+
+      const messageToSend = customText || (customInput && customInput.value.trim()) || selectedMessage;
+      const recipientName = currentSender === 'Efe' ? 'Ecrin' : 'Efe';
+
+      // Yerel Animasyonlar ve Sesler
+      this.triggerHaptic(35);
+      cosmicAudio.playHeartbeat();
+      this.triggerCosmicConfetti();
+      spawnFloatingHearts();
+
+      if (giantHeartBtn) {
+        giantHeartBtn.style.transform = 'scale(0.9)';
+        setTimeout(() => {
+          if (giantHeartBtn) giantHeartBtn.style.transform = '';
+        }, 200);
+      }
+
+      totalLoveCount++;
+      localStorage.setItem('ecrin_love_count', totalLoveCount.toString());
+      const timeStr = new Intl.DateTimeFormat('tr-TR', { hour: '2-digit', minute: '2-digit' }).format(new Date());
+      localStorage.setItem('ecrin_last_love_time', `${currentSender} (${timeStr})`);
+      updateStatsUI();
+
+      showToast(`Sevgi sinyalin ${recipientName}'in telefonuna gönderildi! 🚀❤️`);
+
+      // Gerçek Zamanlı ntfy POST İsteği
+      try {
+        await fetch(NTFY_URL, {
+          method: 'POST',
+          headers: {
+            'Title': `${currentSender === 'Efe' ? '❤️ Efe\'den' : '💖 Ecrin\'den'} Sevgi Sinyali: Seni Seviyorum!`,
+            'Priority': 'urgent',
+            'Tags': 'heart,sparkles',
+            'Click': 'https://ecrinim-omega.vercel.app/#love'
+          },
+          body: JSON.stringify({
+            sender: currentSender,
+            text: messageToSend,
+            time: Date.now()
+          })
+        });
+      } catch (err) {
+        console.warn('Sinyal iletim uyarısı:', err);
+      } finally {
+        isSending = false;
+      }
+    };
+
+    if (giantHeartBtn) {
+      giantHeartBtn.addEventListener('click', () => sendLove());
+    }
+
+    // 7. Bildirim İzni ve Test Butonları
+    const updateNotificationStatus = () => {
+      if (!('Notification' in window)) {
+        if (notifBtnText) notifBtnText.textContent = 'Bildirimler Desteklenmiyor';
+        if (enableNotifBtn) enableNotifBtn.disabled = true;
+        return;
+      }
+
+      if (Notification.permission === 'granted') {
+        if (enableNotifBtn) {
+          enableNotifBtn.classList.add('granted');
+          if (notifBtnText) notifBtnText.textContent = '✅ Bildirimler Aktif';
+        }
+      } else {
+        if (enableNotifBtn) {
+          enableNotifBtn.classList.remove('granted');
+          if (notifBtnText) notifBtnText.textContent = '🔔 Bildirimleri Etkinleştir';
+        }
+      }
+    };
+    updateNotificationStatus();
+
+    const requestPermission = async () => {
+      if (!('Notification' in window)) {
+        alert('Cihazınız web bildirimlerini desteklemiyor.');
+        return;
+      }
+      try {
+        const perm = await Notification.requestPermission();
+        updateNotificationStatus();
+        if (perm === 'granted') {
+          showToast('Harika! Bildirimler açıldı, artık kilit ekranına düşecek.');
+          sendTestNotification();
+        } else {
+          alert('Bildirim izni verilmedi. Telefonunuzun ayarlarından veya tarayıcıdan izin verebilirsiniz.');
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+    };
+
+    if (enableNotifBtn) {
+      enableNotifBtn.addEventListener('click', requestPermission);
+    }
+
+    const sendTestNotification = () => {
+      const title = '❤️ Seni Seviyorum!';
+      const body = `${currentSender === 'Efe' ? 'Efe' : 'Ecrin'} sana kalbinden bir sevgi sinyali gönderdi... Dokun ve hisset ✨`;
+
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.ready.then(reg => {
+          reg.showNotification(title, {
+            body: body,
+            icon: '/apple-touch-icon.png',
+            badge: '/assets/icons/favicon-32x32.png',
+            vibrate: [150, 80, 200, 100, 250],
+            tag: 'love-signal-test',
+            renotify: true,
+            data: { url: '/#love' }
+          });
+        });
+      } else if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification(title, {
+          body: body,
+          icon: '/apple-touch-icon.png'
+        });
+      }
+    };
+
+    if (testNotifBtn) {
+      testNotifBtn.addEventListener('click', () => {
+        this.triggerHaptic(15);
+        if (Notification.permission !== 'granted') {
+          requestPermission();
+        } else {
+          sendTestNotification();
+          showToast('Örnek bildirim telefonuna gönderildi! 📲');
+        }
+      });
+    }
+
+    // 8. Gelen Sevgi Sinyali Kutlama Modalı
+    const showIncomingLoveModal = (sender, message) => {
+      if (!incomingModal) return;
+      if (incomingSenderEl) incomingSenderEl.textContent = `${sender} sana kalbini gönderdi...`;
+      if (incomingMessageEl) incomingMessageEl.textContent = `"${message}"`;
+      if (incomingTimeEl) incomingTimeEl.textContent = 'Az önce';
+
+      incomingModal.classList.add('active');
+      document.body.classList.add('modal-active');
+      this.triggerHaptic(50);
+      cosmicAudio.playHeartbeat();
+      this.triggerCosmicConfetti();
+      spawnFloatingHearts();
+    };
+
+    if (incomingCloseBtn) {
+      incomingCloseBtn.addEventListener('click', () => {
+        incomingModal.classList.remove('active');
+        document.body.classList.remove('modal-active');
+      });
+    }
+
+    if (incomingReplyBtn) {
+      incomingReplyBtn.addEventListener('click', () => {
+        incomingModal.classList.remove('active');
+        document.body.classList.remove('modal-active');
+        sendLove('Ben de seni sonsuz bir aşkla çok seviyorum birtanem! 💓');
+      });
+    }
+
+    // 9. Canlı SSE (Server-Sent Events) Bağlantısı
+    const connectSSE = () => {
+      if (typeof EventSource === 'undefined') return;
+      try {
+        if (eventSource) eventSource.close();
+        eventSource = new EventSource(`${NTFY_URL}/sse`);
+
+        eventSource.onopen = () => {
+          if (liveStatusText) liveStatusText.textContent = 'Canlı Sevgi Hattı Aktif';
+        };
+
+        eventSource.onmessage = (event) => {
+          try {
+            const raw = JSON.parse(event.data);
+            if (raw.event !== 'message' || !raw.message) return;
+
+            let parsedBody = null;
+            try {
+              parsedBody = JSON.parse(raw.message);
+            } catch (e) {
+              parsedBody = { sender: 'Sevgilin', text: raw.message };
+            }
+
+            // Kendi gönderdiğimiz ve henüz 3.5 saniye geçmemiş sinyali es geç
+            if (parsedBody.sender === currentSender && Date.now() - lastSentTimestamp < 3500) {
+              return;
+            }
+
+            const sender = parsedBody.sender || (currentSender === 'Efe' ? 'Ecrin' : 'Efe');
+            const text = parsedBody.text || raw.message;
+
+            // Bildirim ve Modal Göster
+            if (Notification.permission === 'granted' && document.hidden) {
+              if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                navigator.serviceWorker.ready.then(reg => {
+                  reg.showNotification(`❤️ ${sender}'den Sevgi Sinyali!`, {
+                    body: text,
+                    icon: '/apple-touch-icon.png',
+                    badge: '/assets/icons/favicon-32x32.png',
+                    vibrate: [200, 100, 200, 100, 300],
+                    tag: 'love-signal',
+                    renotify: true,
+                    data: { url: '/#love' }
+                  });
+                });
+              }
+            } else {
+              showIncomingLoveModal(sender, text);
+            }
+
+            // Sayacı ve son sinyal vaktini güncelle
+            totalLoveCount++;
+            localStorage.setItem('ecrin_love_count', totalLoveCount.toString());
+            const timeStr = new Intl.DateTimeFormat('tr-TR', { hour: '2-digit', minute: '2-digit' }).format(new Date());
+            localStorage.setItem('ecrin_last_love_time', `${sender} (${timeStr})`);
+            updateStatsUI();
+
+          } catch (e) {
+            console.warn('SSE parse error:', e);
+          }
+        };
+
+        eventSource.onerror = () => {
+          if (liveStatusText) liveStatusText.textContent = 'Canlı Hat Yenileniyor...';
+        };
+      } catch (e) {
+        console.warn('SSE bağlantı hatası:', e);
+      }
+    };
+
+    connectSSE();
+
+    // Sayfa görünürlüğü değiştiğinde SSE'yi tazele
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        connectSSE();
+      }
+    });
+
+    // Hash kontrolü (#love ile açıldıysa direkt bu sekmeye geç)
+    if (window.location.hash === '#love') {
+      setTimeout(() => {
+        this.openPortal();
+        const tabBtn = document.querySelector('.portal-tab-btn[data-tab="love-button"]');
+        if (tabBtn) tabBtn.click();
+      }, 500);
+    }
+  }
+
   setupGeneralEvents() {
     const closeBtn = document.getElementById('close-portal-btn');
     if (closeBtn) {
       closeBtn.addEventListener('click', () => {
         this.closePortal();
+      });
+    }
+
+    const loveHeaderBtn = document.getElementById('open-love-header-btn');
+    if (loveHeaderBtn) {
+      loveHeaderBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.openPortal();
+        const tabBtn = document.querySelector('.portal-tab-btn[data-tab="love-button"]');
+        if (tabBtn) tabBtn.click();
+      });
+    }
+
+    const heroQuickLoveBtn = document.getElementById('hero-quick-love-btn');
+    if (heroQuickLoveBtn) {
+      heroQuickLoveBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const tabBtn = document.querySelector('.portal-tab-btn[data-tab="love-button"]');
+        if (tabBtn) tabBtn.click();
       });
     }
 
@@ -1426,6 +1816,7 @@ class UniverseApp {
         const lightbox = document.getElementById('lightbox-modal');
         const wishModal = document.getElementById('wish-modal');
         const secretModal = document.getElementById('secret-star-modal');
+        const incomingLoveModal = document.getElementById('incoming-love-modal');
 
         if (lightbox && lightbox.classList.contains('active')) {
           lightbox.classList.remove('active');
@@ -1438,6 +1829,9 @@ class UniverseApp {
           document.body.classList.remove('modal-active');
         } else if (secretModal && secretModal.classList.contains('active')) {
           secretModal.classList.remove('active');
+          document.body.classList.remove('modal-active');
+        } else if (incomingLoveModal && incomingLoveModal.classList.contains('active')) {
+          incomingLoveModal.classList.remove('active');
           document.body.classList.remove('modal-active');
         } else {
           this.closePortal();

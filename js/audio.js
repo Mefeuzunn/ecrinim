@@ -198,6 +198,54 @@ class CosmicAudioPlayer {
     } catch (e) {}
   }
 
+  // Romantik çift kalp atışı (Lub-Dub) ve göksel sevgi arpeji
+  playHeartbeat() {
+    try {
+      this.ensureAudioContext();
+      const ctx = this.audioCtx;
+      if (!ctx) return;
+
+      const playThump = (freq, delay, dur) => {
+        setTimeout(() => {
+          if (!this.audioCtx) return;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const filter = ctx.createBiquadFilter();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(32, ctx.currentTime + dur);
+
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(130, ctx.currentTime);
+
+          gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.24, ctx.currentTime + 0.03);
+          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(ctx.currentTime);
+          osc.stop(ctx.currentTime + dur + 0.05);
+        }, delay);
+      };
+
+      // Lub-Dub: Çift kalp atış sesi
+      playThump(92, 0, 0.22);
+      playThump(78, 160, 0.28);
+
+      // Üzerine göksel kristal sevgi arpeji
+      setTimeout(() => {
+        const loveChimes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+        loveChimes.forEach((f, i) => {
+          setTimeout(() => this.playSynthNote(f, 2.5), i * 110);
+        });
+      }, 340);
+    } catch (e) {}
+  }
+
   updateUi() {
     const btn = document.getElementById('music-toggle-btn');
     const label = document.getElementById('music-status-text');

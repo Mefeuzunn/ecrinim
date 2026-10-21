@@ -52,7 +52,7 @@
   <meta name="apple-mobile-web-app-title" content="Ecrinim">
 
   <!-- Özel Stiller -->
-  <link rel="stylesheet" href="css/style.css?v=3.7">
+  <link rel="stylesheet" href="css/style.css?v=3.8">
 </head>
 <body>
 
@@ -67,6 +67,12 @@
     </div>
 
     <div class="header-controls">
+      <!-- 0. Sevgi Tuşu Butonu -->
+      <button id="open-love-header-btn" class="cosmic-btn glass-btn love-header-btn" title="Sevgi Tuşu: Seni Seviyorum!">
+        <span class="btn-icon heart-pulse-icon">💓</span>
+        <span class="btn-text">Sevgi Tuşu</span>
+      </button>
+
       <!-- 1. Kayan Yıldıza Dilek Tut Butonu -->
       <button id="wish-meteor-btn" class="cosmic-btn glass-btn" title="Gökyüzüne Dilek Gönder">
         <span class="btn-icon">🌠</span>
@@ -145,6 +151,15 @@
           "Karanlık bir evrende, kalbimi aydınlatan en parlak yıldız sensin..."
         </p>
 
+        <!-- Hızlı Sevgi Sinyali Tuşu (Hero Shortcut) -->
+        <div class="hero-love-shortcut">
+          <button type="button" id="hero-quick-love-btn" class="hero-quick-love-btn" title="Ecrin'e Sevgi Sinyali Gönder">
+            <span class="hero-love-heart">💓</span>
+            <span class="hero-love-text">Sevgi Sinyali Gönder</span>
+            <span class="hero-love-badge">Seni Seviyorum</span>
+          </button>
+        </div>
+
         <!-- SAYAÇLAR ALANI: GEÇEN ZAMAN & 1. YIL GERİ SAYIMI -->
         <div class="counters-wrapper">
           <!-- Mobil Segment Switcher (Kompakt Sayaç Geçişi) -->
@@ -222,6 +237,9 @@
         <nav class="portal-nav-tabs" id="portal-nav-tabs">
           <button class="portal-tab-btn active" data-tab="certificate">
             <span class="tab-icon">📜</span> Yıldız Sertifikası
+          </button>
+          <button class="portal-tab-btn" data-tab="love-button">
+            <span class="tab-icon">💓</span> Sevgi Tuşu
           </button>
           <!-- Geçici olarak kaldırıldı (Daha sonra eklenecek)
           <button class="portal-tab-btn" data-tab="timeline">
@@ -381,6 +399,136 @@
               </button>
             </div>
             <p class="cert-download-hint">💡 İndir tuşuna bastığınızda sertifikanız yüksek çözünürlüklü olarak hazırlanır ve doğrudan cihazınıza kaydedilir / paylaşılır.</p>
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- 2. SEKME: SEVGİ TUŞU & KALP SİNYALİ (BİLDİRİM) -->
+        <!-- ============================================== -->
+        <div class="portal-tab-panel" id="tab-love-button">
+          <div class="love-section-wrapper">
+            
+            <div class="love-header-intro">
+              <div class="love-badge-crest">✦ 💓 ✦</div>
+              <h2>Kozmik Sevgi Sinyali</h2>
+              <p class="love-subtitle">
+                Bu tuşa bastığında, sevgilinin telefonuna anında <em>"Seni Seviyorum"</em> bildirimi ve kalp atışı sinyali ulaşır.
+              </p>
+            </div>
+
+            <!-- Gönderen Kimliği Seçici (Efe / Ecrin) -->
+            <div class="sender-select-card">
+              <span class="sender-label">Şu An Kim Gönderiyor?</span>
+              <div class="sender-pills" id="sender-pills">
+                <button type="button" class="sender-pill active" data-sender="Efe">
+                  <span class="sender-avatar">🧑🏻‍🚀</span>
+                  <span class="sender-name">Efe</span>
+                  <span class="sender-check">✓</span>
+                </button>
+                <button type="button" class="sender-pill" data-sender="Ecrin">
+                  <span class="sender-avatar">👸🏻</span>
+                  <span class="sender-name">Ecrin</span>
+                  <span class="sender-check">✓</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- DEV 3D KALP BUTONU (HERO BEATING HEART) -->
+            <div class="giant-heart-wrapper">
+              <div class="heart-pulse-rings">
+                <span class="ring ring-1"></span>
+                <span class="ring ring-2"></span>
+                <span class="ring ring-3"></span>
+              </div>
+
+              <button type="button" id="giant-love-heart-btn" class="giant-love-heart-btn" aria-label="Seni Seviyorum Sinyali Gönder">
+                <div class="heart-inner-shape">
+                  <span class="heart-glow-emoji">💖</span>
+                  <span class="heart-cta-title">SENİ SEVİYORUM</span>
+                  <span class="heart-cta-sub">Dokun & Kalbini Hissettir ✨</span>
+                </div>
+              </button>
+              
+              <div id="love-sent-toast" class="love-sent-toast" aria-live="polite">
+                <span class="toast-sparkle">✨</span>
+                <span id="toast-text">Sevgi sinyalin başarıyla gönderildi! ❤️</span>
+              </div>
+            </div>
+
+            <!-- HAZIR ROMANTİK SEVGİ CÜMLELERİ -->
+            <div class="love-messages-container">
+              <span class="messages-heading">💌 Yanında Hangi Mesajı Göndermek İstersin?</span>
+              <div class="love-chips-grid" id="love-chips-grid">
+                <button type="button" class="love-chip active" data-msg="Seni çok seviyorum canım sevgilim! Kalbim daima senin için çarpıyor... 💖">
+                  💖 "Seni çok seviyorum canım sevgilim!"
+                </button>
+                <button type="button" class="love-chip" data-msg="Şu an sadece aklımdasın, seni düşünüyorum... 💭">
+                  💭 "Şu an sadece aklımdasın..."
+                </button>
+                <button type="button" class="love-chip" data-msg="Seni öyle çok özledim ki, hemen sarılmak istiyorum! 🥺">
+                  🥺 "Seni çok özledim, sarılmak istiyorum!"
+                </button>
+                <button type="button" class="love-chip" data-msg="Kalbim bu evrende sadece ve sadece senin için çarpıyor... 💓">
+                  💓 "Kalbim sadece senin için çarpıyor..."
+                </button>
+                <button type="button" class="love-chip" data-msg="İyi ki varsın benim en güzel gökyüzüm, dünyam sensin... 🌟">
+                  🌟 "İyi ki varsın benim güzel gökyüzüm..."
+                </button>
+                <button type="button" class="love-chip" data-msg="Günün pırıl pırıl ve çok güzel geçsin birtanem! 🌸">
+                  🌸 "Günün çok güzel geçsin birtanem!"
+                </button>
+              </div>
+
+              <!-- Özel Mesaj Yazma Girişi -->
+              <div class="custom-love-input-wrap">
+                <input type="text" id="custom-love-input" placeholder="Veya kendi özel aşk notunu yaz..." maxlength="120" autocomplete="off">
+              </div>
+            </div>
+
+            <!-- TELEFON BİLDİRİM KONTROL KARTI -->
+            <div class="phone-notification-card">
+              <div class="notif-card-header">
+                <div class="notif-icon-bubble">🔔</div>
+                <div class="notif-card-info">
+                  <h4>Telefon Kilit Ekranı Bildirimleri</h4>
+                  <p>Uygulama kapalıyken veya telefon kilitliyken sevgilinden gelen "Seni Seviyorum" sinyalleri anında ekranına düşsün.</p>
+                </div>
+              </div>
+              
+              <!-- Bildirim İzin Butonu / Durumu -->
+              <div class="notif-action-row">
+                <button type="button" id="enable-notifications-btn" class="enable-notif-btn">
+                  <span class="btn-icon">🔔</span>
+                  <span id="notif-btn-text">Bildirimleri Etkinleştir</span>
+                </button>
+                <button type="button" id="test-notification-btn" class="test-notif-btn" title="Kendi cihazında test et">
+                  <span>Örnek Bildirim Gönder 📲</span>
+                </button>
+              </div>
+              
+              <div class="notif-guide-hint">
+                💡 <strong>iPhone Kullanıcıları:</strong> Bildirimleri kilit ekranında alabilmek için Safari'den <em>Paylaş ➔ Ana Ekrana Ekle</em> diyerek uygulamayı yüklemiş olmanız gerekmektedir.
+              </div>
+            </div>
+
+            <!-- CANLI BAĞLANTI & SEVGİ SAYACI -->
+            <div class="love-stats-card">
+              <div class="live-status-pill">
+                <span class="live-dot-pulse"></span>
+                <span id="live-connection-status">Canlı Sevgi Hattı Aktif</span>
+              </div>
+              <div class="stats-counter-row">
+                <div class="stat-box">
+                  <span class="stat-number" id="total-love-count">0</span>
+                  <span class="stat-label">Toplam Sevgi Sinyali</span>
+                </div>
+                <div class="stat-box">
+                  <span class="stat-desc" id="last-love-time">Henüz sinyal yok</span>
+                  <span class="stat-label">Son Gönderilen</span>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -674,6 +822,27 @@
     </div>
   </div>
 
+  <!-- ============================================== -->
+  <!-- GELEN SEVGİ SİNYALİ KUTLAMA MODALI             -->
+  <!-- ============================================== -->
+  <div id="incoming-love-modal" class="cosmic-modal">
+    <div class="cosmic-modal-box incoming-love-box">
+      <button class="modal-close-btn" id="close-incoming-love-btn">✕</button>
+      <div class="incoming-love-crest">
+        <span class="incoming-heart-beat">💓</span>
+      </div>
+      <span class="incoming-love-badge">YENİ BİR SEVGİ SİNYALİ GELDİ!</span>
+      <h3 id="incoming-love-sender">Efe sana kalbini gönderdi...</h3>
+      <div class="incoming-love-quote-box">
+        <p id="incoming-love-message">"Seni çok seviyorum canım sevgilim! Kalbim daima senin için çarpıyor... 💖"</p>
+        <span class="incoming-love-time" id="incoming-love-time">Az önce</span>
+      </div>
+      <button type="button" class="incoming-love-reply-btn" id="incoming-love-reply-btn">
+        <span>Ben de Seni Çok Seviyorum! 💓</span>
+      </button>
+    </div>
+  </div>
+
   <!-- Fotoğraf Büyüteci (Lightbox Modal) -->
   <div id="lightbox-modal" class="lightbox-modal" aria-hidden="true">
     <button class="lightbox-close" id="lightbox-close" aria-label="Kapat">✕</button>
@@ -686,6 +855,6 @@
   </div>
 
   <!-- Ana Uygulama Modülü -->
-  <script type="module" src="js/app.js?v=4.2"></script>
+  <script type="module" src="js/app.js?v=4.3"></script>
 </body>
 </html>
